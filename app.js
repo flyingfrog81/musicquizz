@@ -98,6 +98,12 @@ let selectedCategory = null;
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', function() {
   renderCategories();
+  
+  // Setup persistent New Challenge button
+  const newChallengePersistentBtn = document.getElementById('btn-new-challenge-persistent');
+  if (newChallengePersistentBtn) {
+    newChallengePersistentBtn.onclick = () => renderCategories();
+  }
 });
 
 // ---------------------------------------------------------
@@ -113,6 +119,13 @@ function renderCategories() {
     btn.onclick = () => selectCategory(category);
     categoriesContainer.appendChild(btn);
   }
+
+  // Clear any previous challenge content
+  challengeContainer.innerHTML = "";
+  difficultiesContainer.innerHTML = "";
+  
+  // Reset selected category
+  selectedCategory = null;
 
   showSection(categoriesContainer);
   hideSection(difficultiesContainer);
@@ -150,12 +163,9 @@ function showChallenge(challenge) {
     </div>
     
     <div id="spotify-player" class="spotify-player"></div>
-    
-    <button id="btn-new-challenge">New Challenge</button>
   `;
 
   setupChallengeControls(challenge);
-  document.getElementById("btn-new-challenge").onclick = () => renderCategories();
 
   showSection(challengeContainer);
 }
@@ -203,10 +213,13 @@ function setupChallengeControls(challenge) {
   
   playBtn.onclick = () => playSpotifyTrack(challenge.spotify, playerDiv);
   pauseBtn.onclick = () => pauseSpotifyTrack(playerDiv);
-  revealBtn.onclick = () => revealSongInfo(challenge);
+  revealBtn.onclick = () => {
+    revealSongInfo(challenge);
+    revealSpotifyPlayer(playerDiv, challenge.spotify);
+  };
 }
 
-// Play Spotify track in embedded player
+// Play Spotify track in embedded player (content hidden until reveal)
 function playSpotifyTrack(spotifyUrl, playerDiv) {
   const trackId = extractSpotifyTrackId(spotifyUrl);
   if (!trackId) {
@@ -214,20 +227,33 @@ function playSpotifyTrack(spotifyUrl, playerDiv) {
     return;
   }
   
-  // Create embedded Spotify player
-  const embedUrl = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1&theme=0`;
+  // First try with autoplay
+  let embedUrl = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1&theme=0`;
   
   playerDiv.innerHTML = `
-    <iframe 
-      src="${embedUrl}" 
-      width="100%" 
-      height="152" 
-      frameborder="0" 
-      allowtransparency="true" 
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy">
-    </iframe>
+    <div class="hidden-player">
+      <iframe 
+        id="spotify-iframe"
+        src="${embedUrl}" 
+        width="100%" 
+        height="152" 
+        frameborder="0" 
+        allowtransparency="true" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+      </iframe>
+      <div class="spotify-info-overlay hidden-overlay">
+        <div style="text-align: center;">
+          <div class="status-indicator">🎵</div>
+          <p><strong>Music playing...</strong></p>
+          <p class="hint">Click "Reveal" to see song info</p>
+        </div>
+      </div>
+    </div>
   `;
+  
+  // The Spotify iframe will load and play in the background
+  // The play controls remain accessible at the bottom
   
   updateButtonStates('playing');
 }
@@ -235,8 +261,34 @@ function playSpotifyTrack(spotifyUrl, playerDiv) {
 // Pause Spotify track
 function pauseSpotifyTrack(playerDiv) {
   // Remove the iframe to stop playback
-  playerDiv.innerHTML = '<div class="player-stopped">⏹️ Playback stopped</div>';
+  playerDiv.innerHTML = `
+    <div class="player-status stopped">
+      <div class="status-indicator">⏹️</div>
+      <p><strong>Playback stopped</strong></p>
+      <p class="hint">Click "Play" to start music again</p>
+    </div>
+  `;
   updateButtonStates('paused');
+}
+
+// Reveal the actual Spotify player (remove blur and overlay)
+function revealSpotifyPlayer(playerDiv, spotifyUrl) {
+  const trackId = extractSpotifyTrackId(spotifyUrl);
+  if (!trackId) return;
+  
+  // Check if there's already a hidden player
+  const hiddenPlayer = playerDiv.querySelector('.hidden-player');
+  if (hiddenPlayer) {
+    // Remove the info overlay to reveal song information
+    const infoOverlay = hiddenPlayer.querySelector('.spotify-info-overlay');
+    
+    if (infoOverlay) {
+      infoOverlay.classList.remove('hidden-overlay');
+      infoOverlay.classList.add('revealed-overlay');
+    }
+    
+    hiddenPlayer.classList.add('revealed');
+  }
 }
 
 // Reveal song information
