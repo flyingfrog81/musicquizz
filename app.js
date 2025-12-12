@@ -151,11 +151,11 @@ function showChallenge(challenge) {
     
     <div id="spotify-player" class="spotify-player"></div>
     
-    <button id="btn-back-difficulties">Back to difficulties</button>
+    <button id="btn-new-challenge">New Challenge</button>
   `;
 
   setupChallengeControls(challenge);
-  document.getElementById("btn-back-difficulties").onclick = () => renderDifficulties(selectedCategory);
+  document.getElementById("btn-new-challenge").onclick = () => renderCategories();
 
   showSection(challengeContainer);
 }
@@ -255,12 +255,15 @@ async function revealSongInfo(challenge) {
     
     try {
       const response = await fetch(oembedUrl);
-      if (!response.ok) throw new Error('oEmbed API failed');
+      if (!response.ok) throw new Error(`oEmbed API failed with status: ${response.status}`);
       
       const data = await response.json();
       console.log('Spotify oEmbed data:', data); // Debug log to see what we get
+      console.log('Track ID:', trackId); // Debug the track ID we extracted
       displaySongInfo(data, challenge);
     } catch (apiError) {
+      console.error('oEmbed API error:', apiError);
+      console.log('Falling back to challenge data for track:', trackId);
       // Fallback: Show the basic song info from challenge data
       displayFallbackInfo(challenge, trackId);
     }
@@ -340,14 +343,18 @@ function displaySongInfo(data, challenge) {
 function displayFallbackInfo(challenge, trackId) {
   const songInfoDiv = document.getElementById("song-info");
   
+  // Check if this is a placeholder URL
+  const isPlaceholder = trackId && (trackId.startsWith('STUB') || trackId.startsWith('IT') || trackId.startsWith('80_') || trackId.startsWith('RC') || trackId.startsWith('MS') || trackId.startsWith('PA'));
+  
   songInfoDiv.innerHTML = `
     <div class="song-details">
       <h3>🎵 Song Revealed!</h3>
+      ${isPlaceholder ? '<div class="warning">⚠️ This is placeholder data - real Spotify data not available</div>' : ''}
       <div class="song-meta">
         <p><strong>Title:</strong> ${challenge.song || "Unknown Title"}</p>
         <p><strong>Artist:</strong> ${challenge.artist || "Unknown Artist"}</p>
         ${trackId ? `<p><strong>Track ID:</strong> ${trackId}</p>` : ''}
-        <p><a href="${challenge.spotify}" target="_blank">🔗 Open in Spotify</a></p>
+        ${!isPlaceholder ? `<p><a href="${challenge.spotify}" target="_blank">🔗 Open in Spotify</a></p>` : '<p>🔗 Placeholder URL - no real Spotify link</p>'}
       </div>
     </div>
   `;
