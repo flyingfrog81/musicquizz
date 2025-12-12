@@ -2,6 +2,8 @@
 
 A fun and interactive music quiz game where players can test their knowledge of songs and artists.
 
+🎮 **[Play the Game Live](https://flyingfrog81.github.io/musicquizz/)**
+
 ## Features
 
 - Interactive quiz interface
