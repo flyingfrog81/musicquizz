@@ -136,16 +136,25 @@ function renderDifficulties(category) {
 // Render the selected challenge
 function showChallenge(challenge) {
   challengeContainer.innerHTML = `
-    <h2>${challenge.songTitle || challenge.song}</h2>
+    <h2>Challenge - Difficulty ${challenge.difficulty}</h2>
     <p class="challenge-type">Type: ${formatChallengeType(challenge.type)}</p>
-    <button id="btn-play-spotify" class="spotify-button">🎵 Play on Spotify</button>
+    
+    <div class="spotify-controls">
+      <button id="btn-play" class="control-button play-button">▶️ Play</button>
+      <button id="btn-pause" class="control-button pause-button">⏸️ Pause</button>
+      <button id="btn-reveal" class="control-button reveal-button">🔍 Reveal</button>
+    </div>
+    
+    <div id="song-info" class="song-info hidden">
+      <div class="loading">Loading song information...</div>
+    </div>
+    
+    <div id="spotify-player" class="spotify-player"></div>
+    
     <button id="btn-back-difficulties">Back to difficulties</button>
   `;
 
-  document.getElementById("btn-play-spotify").onclick = () => {
-    window.open(challenge.spotify, '_blank');
-  };
-
+  setupChallengeControls(challenge);
   document.getElementById("btn-back-difficulties").onclick = () => renderDifficulties(selectedCategory);
 
   showSection(challengeContainer);
@@ -183,6 +192,181 @@ function formatChallengeType(type) {
     case "continue-lyrics": return "Continue the lyrics";
     default: return type;
   }
+}
+
+// Setup challenge control buttons
+function setupChallengeControls(challenge) {
+  const playBtn = document.getElementById("btn-play");
+  const pauseBtn = document.getElementById("btn-pause");
+  const revealBtn = document.getElementById("btn-reveal");
+  const playerDiv = document.getElementById("spotify-player");
+  
+  playBtn.onclick = () => playSpotifyTrack(challenge.spotify, playerDiv);
+  pauseBtn.onclick = () => pauseSpotifyTrack(playerDiv);
+  revealBtn.onclick = () => revealSongInfo(challenge);
+}
+
+// Play Spotify track in embedded player
+function playSpotifyTrack(spotifyUrl, playerDiv) {
+  const trackId = extractSpotifyTrackId(spotifyUrl);
+  if (!trackId) {
+    showError("Invalid Spotify URL");
+    return;
+  }
+  
+  // Create embedded Spotify player
+  const embedUrl = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1&theme=0`;
+  
+  playerDiv.innerHTML = `
+    <iframe 
+      src="${embedUrl}" 
+      width="100%" 
+      height="152" 
+      frameborder="0" 
+      allowtransparency="true" 
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy">
+    </iframe>
+  `;
+  
+  updateButtonStates('playing');
+}
+
+// Pause Spotify track
+function pauseSpotifyTrack(playerDiv) {
+  // Remove the iframe to stop playback
+  playerDiv.innerHTML = '<div class="player-stopped">⏹️ Playback stopped</div>';
+  updateButtonStates('paused');
+}
+
+// Reveal song information
+async function revealSongInfo(challenge) {
+  const songInfoDiv = document.getElementById("song-info");
+  songInfoDiv.classList.remove("hidden");
+  
+  try {
+    const trackId = extractSpotifyTrackId(challenge.spotify);
+    if (!trackId) {
+      throw new Error("Invalid Spotify URL");
+    }
+    
+    // Try to get song info from Spotify oEmbed API
+    const oembedUrl = `https://open.spotify.com/oembed?url=${encodeURIComponent(challenge.spotify)}&format=json`;
+    
+    try {
+      const response = await fetch(oembedUrl);
+      if (!response.ok) throw new Error('oEmbed API failed');
+      
+      const data = await response.json();
+      displaySongInfo(data, challenge);
+    } catch (apiError) {
+      // Fallback: Show the basic song info from challenge data
+      displayFallbackInfo(challenge, trackId);
+    }
+    
+  } catch (error) {
+    console.error('Error revealing song info:', error);
+    songInfoDiv.innerHTML = `
+      <div class="error">
+        <p>❌ Unable to load song information</p>
+        <p class="error-detail">Showing basic info instead</p>
+      </div>
+    `;
+    
+    // Even on error, show basic challenge info
+    setTimeout(() => displayFallbackInfo(challenge, null), 1000);
+  }
+}
+
+// Display song information from Spotify oEmbed
+function displaySongInfo(data, challenge) {
+  const songInfoDiv = document.getElementById("song-info");
+  
+  // Extract information from oEmbed response
+  const title = data.title || challenge.song || "Unknown Title";
+  const thumbnail = data.thumbnail_url || "";
+  
+  songInfoDiv.innerHTML = `
+    <div class="song-details">
+      <h3>🎵 Song Revealed!</h3>
+      ${thumbnail ? `<img src="${thumbnail}" alt="Album cover" class="album-cover">` : ''}
+      <div class="song-meta">
+        <p><strong>Title:</strong> ${title}</p>
+        <p><strong>Artist:</strong> ${challenge.artist || "Unknown Artist"}</p>
+        <p><strong>Source:</strong> Spotify</p>
+      </div>
+    </div>
+  `;
+}
+
+// Fallback song info display
+function displayFallbackInfo(challenge, trackId) {
+  const songInfoDiv = document.getElementById("song-info");
+  
+  songInfoDiv.innerHTML = `
+    <div class="song-details">
+      <h3>🎵 Song Revealed!</h3>
+      <div class="song-meta">
+        <p><strong>Title:</strong> ${challenge.song || "Unknown Title"}</p>
+        <p><strong>Artist:</strong> ${challenge.artist || "Unknown Artist"}</p>
+        ${trackId ? `<p><strong>Track ID:</strong> ${trackId}</p>` : ''}
+        <p><a href="${challenge.spotify}" target="_blank">🔗 Open in Spotify</a></p>
+      </div>
+    </div>
+  `;
+}
+
+// Update button visual states
+function updateButtonStates(state) {
+  const playBtn = document.getElementById("btn-play");
+  const pauseBtn = document.getElementById("btn-pause");
+  
+  // Reset all button states
+  playBtn.classList.remove('active');
+  pauseBtn.classList.remove('active');
+  
+  // Set active state
+  if (state === 'playing') {
+    playBtn.classList.add('active');
+    playBtn.textContent = '▶️ Playing...';
+    pauseBtn.textContent = '⏸️ Pause';
+  } else if (state === 'paused') {
+    pauseBtn.classList.add('active');
+    playBtn.textContent = '▶️ Play';
+    pauseBtn.textContent = '⏸️ Paused';
+  }
+}
+
+// Extract Spotify track ID from various URL formats
+function extractSpotifyTrackId(url) {
+  if (!url) return null;
+  
+  // Handle different Spotify URL formats
+  const patterns = [
+    /open\.spotify\.com\/track\/([a-zA-Z0-9]+)/,
+    /embed\/track\/([a-zA-Z0-9]+)/,
+    /track[\/:]([a-zA-Z0-9]+)/
+  ];
+  
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return match[1];
+    }
+  }
+  
+  return null;
+}
+
+// Show error message
+function showError(message) {
+  const songInfoDiv = document.getElementById("song-info");
+  songInfoDiv.classList.remove("hidden");
+  songInfoDiv.innerHTML = `
+    <div class="error">
+      <p>❌ ${message}</p>
+    </div>
+  `;
 }
 
 // Ensure Spotify URL is in the correct format for app linking

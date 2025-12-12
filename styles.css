@@ -78,12 +78,124 @@ button:active {
   opacity: 0.8;
 }
 
-/* Spotify embed */
-#challenge iframe {
+/* Spotify controls */
+.spotify-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.control-button {
+  flex: 1;
+  min-width: 80px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.play-button {
+  background: #1db954;
+  color: white;
+}
+
+.play-button:hover {
+  background: #1ed760;
+}
+
+.play-button.active {
+  background: #1aa34a;
+  transform: none;
+}
+
+.pause-button {
+  background: #ff6b6b;
+  color: white;
+}
+
+.pause-button:hover {
+  background: #ff5252;
+}
+
+.pause-button.active {
+  background: #e53935;
+  transform: none;
+}
+
+.reveal-button {
+  background: #2196f3;
+  color: white;
+}
+
+.reveal-button:hover {
+  background: #1976d2;
+}
+
+/* Song info display */
+.song-info {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+}
+
+.song-details h3 {
+  margin: 0 0 1rem 0;
+  color: #1db954;
+}
+
+.album-cover {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.song-meta p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.song-meta strong {
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.error {
+  color: #dc3545;
+  text-align: center;
+}
+
+.error-detail {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Spotify player */
+.spotify-player iframe {
   width: 100%;
   height: 152px;
   border-radius: 12px;
   border: none;
+  margin: 1rem 0;
+}
+
+.player-stopped {
+  text-align: center;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+  margin: 1rem 0;
+  color: #6c757d;
 }
 
 /* Responsive tweaks */
