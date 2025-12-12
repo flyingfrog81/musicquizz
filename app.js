@@ -258,6 +258,7 @@ async function revealSongInfo(challenge) {
       if (!response.ok) throw new Error('oEmbed API failed');
       
       const data = await response.json();
+      console.log('Spotify oEmbed data:', data); // Debug log to see what we get
       displaySongInfo(data, challenge);
     } catch (apiError) {
       // Fallback: Show the basic song info from challenge data
@@ -282,8 +283,44 @@ async function revealSongInfo(challenge) {
 function displaySongInfo(data, challenge) {
   const songInfoDiv = document.getElementById("song-info");
   
-  // Extract information from oEmbed response
-  const title = data.title || challenge.song || "Unknown Title";
+  // Parse Spotify oEmbed title which usually comes in format "Song Title by Artist Name"
+  let songTitle = "Unknown Title";
+  let artistName = "Unknown Artist";
+  
+  if (data.title) {
+    const titleParts = data.title.split(" by ");
+    if (titleParts.length >= 2) {
+      songTitle = titleParts[0];
+      artistName = titleParts.slice(1).join(" by "); // In case there are multiple "by" in the title
+    } else {
+      // If no " by " pattern, try other common patterns
+      const altPatterns = [" - ", " – ", " — "];
+      let parsed = false;
+      
+      for (const pattern of altPatterns) {
+        if (data.title.includes(pattern)) {
+          const parts = data.title.split(pattern);
+          if (parts.length >= 2) {
+            songTitle = parts[0];
+            artistName = parts.slice(1).join(pattern);
+            parsed = true;
+            break;
+          }
+        }
+      }
+      
+      if (!parsed) {
+        // If no pattern matches, use the full title as song title
+        songTitle = data.title;
+        artistName = challenge.artist || "Unknown Artist";
+      }
+    }
+  } else {
+    // Fallback to challenge data
+    songTitle = challenge.song || "Unknown Title";
+    artistName = challenge.artist || "Unknown Artist";
+  }
+  
   const thumbnail = data.thumbnail_url || "";
   
   songInfoDiv.innerHTML = `
@@ -291,8 +328,8 @@ function displaySongInfo(data, challenge) {
       <h3>🎵 Song Revealed!</h3>
       ${thumbnail ? `<img src="${thumbnail}" alt="Album cover" class="album-cover">` : ''}
       <div class="song-meta">
-        <p><strong>Title:</strong> ${title}</p>
-        <p><strong>Artist:</strong> ${challenge.artist || "Unknown Artist"}</p>
+        <p><strong>Title:</strong> ${songTitle}</p>
+        <p><strong>Artist:</strong> ${artistName}</p>
         <p><strong>Source:</strong> Spotify</p>
       </div>
     </div>
