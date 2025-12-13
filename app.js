@@ -13,7 +13,7 @@ const challengeContainer    = document.getElementById("challenge");
 let songsData = {
   "sing-along": [
     { "difficulty": 1, "type": "guess-title", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/7037bX3jdaUWUAXL12CHGy?si=8f032fd38d8443e8" },
-    { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/STUB2" },
+    { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6" },
     { "difficulty": 3, "type": "continue-lyrics", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/STUB3" },
     { "difficulty": 4, "type": "guess-title", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/STUB4" },
     { "difficulty": 5, "type": "guess-artist", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/STUB5" },
@@ -153,8 +153,6 @@ function showChallenge(challenge) {
     <p class="challenge-type">Type: ${formatChallengeType(challenge.type)}</p>
     
     <div class="spotify-controls">
-      <button id="btn-play" class="control-button play-button">▶️ Play</button>
-      <button id="btn-pause" class="control-button pause-button">⏸️ Pause</button>
       <button id="btn-reveal" class="control-button reveal-button">🔍 Reveal</button>
     </div>
     
@@ -165,6 +163,8 @@ function showChallenge(challenge) {
     <div id="spotify-player" class="spotify-player"></div>
   `;
 
+  // Immediately load the Spotify player with overlay
+  loadSpotifyPlayer(challenge);
   setupChallengeControls(challenge);
 
   showSection(challengeContainer);
@@ -204,34 +204,21 @@ function formatChallengeType(type) {
   }
 }
 
-// Setup challenge control buttons
-function setupChallengeControls(challenge) {
-  const playBtn = document.getElementById("btn-play");
-  const pauseBtn = document.getElementById("btn-pause");
-  const revealBtn = document.getElementById("btn-reveal");
+// Load Spotify player immediately when challenge is shown
+function loadSpotifyPlayer(challenge) {
   const playerDiv = document.getElementById("spotify-player");
+  const trackId = extractSpotifyTrackId(challenge.spotify);
   
-  playBtn.onclick = () => playSpotifyTrack(challenge.spotify, playerDiv);
-  pauseBtn.onclick = () => pauseSpotifyTrack(playerDiv);
-  revealBtn.onclick = () => {
-    revealSongInfo(challenge);
-    revealSpotifyPlayer(playerDiv, challenge.spotify);
-  };
-}
-
-// Play Spotify track in embedded player (content hidden until reveal)
-function playSpotifyTrack(spotifyUrl, playerDiv) {
-  const trackId = extractSpotifyTrackId(spotifyUrl);
   if (!trackId) {
-    showError("Invalid Spotify URL");
+    playerDiv.innerHTML = '<div class="error">Invalid Spotify URL</div>';
     return;
   }
   
-  // First try with autoplay
-  let embedUrl = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1&theme=0`;
+  // Create embedded Spotify player with complete overlay
+  const embedUrl = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&autoplay=1&theme=0`;
   
   playerDiv.innerHTML = `
-    <div class="hidden-player">
+    <div class="spotify-container">
       <iframe 
         id="spotify-iframe"
         src="${embedUrl}" 
@@ -242,52 +229,42 @@ function playSpotifyTrack(spotifyUrl, playerDiv) {
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
         loading="lazy">
       </iframe>
-      <div class="spotify-info-overlay hidden-overlay">
-        <div style="text-align: center;">
-          <div class="status-indicator">🎵</div>
-          <p><strong>Music playing...</strong></p>
-          <p class="hint">Click "Reveal" to see song info</p>
+      <div class="spotify-overlay">
+        <div class="mystery-content">
+          <div class="mystery-icon">🎵</div>
+          <p>Music is playing...</p>
+          <p class="mystery-hint">Can you guess the song?</p>
         </div>
       </div>
     </div>
   `;
-  
-  // The Spotify iframe will load and play in the background
-  // The play controls remain accessible at the bottom
-  
-  updateButtonStates('playing');
 }
 
-// Pause Spotify track
-function pauseSpotifyTrack(playerDiv) {
-  // Remove the iframe to stop playback
-  playerDiv.innerHTML = `
-    <div class="player-status stopped">
-      <div class="status-indicator">⏹️</div>
-      <p><strong>Playback stopped</strong></p>
-      <p class="hint">Click "Play" to start music again</p>
-    </div>
-  `;
-  updateButtonStates('paused');
+// Setup challenge control buttons
+function setupChallengeControls(challenge) {
+  const revealBtn = document.getElementById("btn-reveal");
+  const playerDiv = document.getElementById("spotify-player");
+  
+  revealBtn.onclick = () => {
+    revealSongInfo(challenge);
+    revealSpotifyPlayer(playerDiv, challenge.spotify);
+  };
 }
 
-// Reveal the actual Spotify player (remove blur and overlay)
+
+
+
+// Reveal the Spotify player by removing the overlay
 function revealSpotifyPlayer(playerDiv, spotifyUrl) {
-  const trackId = extractSpotifyTrackId(spotifyUrl);
-  if (!trackId) return;
+  const overlay = playerDiv.querySelector('.spotify-overlay');
+  const container = playerDiv.querySelector('.spotify-container');
   
-  // Check if there's already a hidden player
-  const hiddenPlayer = playerDiv.querySelector('.hidden-player');
-  if (hiddenPlayer) {
-    // Remove the info overlay to reveal song information
-    const infoOverlay = hiddenPlayer.querySelector('.spotify-info-overlay');
-    
-    if (infoOverlay) {
-      infoOverlay.classList.remove('hidden-overlay');
-      infoOverlay.classList.add('revealed-overlay');
-    }
-    
-    hiddenPlayer.classList.add('revealed');
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+  
+  if (container) {
+    container.classList.add('revealed');
   }
 }
 
@@ -412,26 +389,7 @@ function displayFallbackInfo(challenge, trackId) {
   `;
 }
 
-// Update button visual states
-function updateButtonStates(state) {
-  const playBtn = document.getElementById("btn-play");
-  const pauseBtn = document.getElementById("btn-pause");
-  
-  // Reset all button states
-  playBtn.classList.remove('active');
-  pauseBtn.classList.remove('active');
-  
-  // Set active state
-  if (state === 'playing') {
-    playBtn.classList.add('active');
-    playBtn.textContent = '▶️ Playing...';
-    pauseBtn.textContent = '⏸️ Pause';
-  } else if (state === 'paused') {
-    pauseBtn.classList.add('active');
-    playBtn.textContent = '▶️ Play';
-    pauseBtn.textContent = '⏸️ Paused';
-  }
-}
+
 
 // Extract Spotify track ID from various URL formats
 function extractSpotifyTrackId(url) {
