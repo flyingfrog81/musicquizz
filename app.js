@@ -543,12 +543,19 @@ function renderCategories() {
     categoriesContainer.appendChild(btn);
   }
 
-  // Clear any previous challenge content
-  challengeContainer.innerHTML = "";
+  // Clear any previous content
   difficultiesContainer.innerHTML = "";
   
-  // Reset selected category
+  // Reset selected category and current track
   selectedCategory = null;
+  currentTrack = null;
+  window.currentChallenge = null;
+  
+  // Reset persistent player track info
+  const trackInfoElement = document.getElementById('current-track-info');
+  if (trackInfoElement) {
+    trackInfoElement.innerHTML = 'No track selected';
+  }
 
   showSection(categoriesContainer);
   hideSection(difficultiesContainer);
@@ -566,24 +573,19 @@ function renderDifficulties(category) {
   });
 
   showSection(difficultiesContainer);
-  hideSection(challengeContainer);
+  // Challenge section no longer needed
 }
 
-// Render the selected challenge
+// Select challenge and update persistent player
 function showChallenge(challenge) {
   // Set current track for persistent player
   currentTrack = challenge.spotify;
   updatePersistentPlayerTrackInfo(challenge);
   
-  challengeContainer.innerHTML = `
-    <h2>Challenge - Difficulty ${challenge.difficulty}</h2>
-    <p class="challenge-type">Type: ${formatChallengeType(challenge.type)}</p>
-  `;
-
-  // Setup challenge controls (reveal button now in persistent player)
-  setupChallengeControls(challenge);
-
-  showSection(challengeContainer);
+  // Store current challenge for reveal functionality
+  window.currentChallenge = challenge;
+  
+  // No need to show challenge section anymore - all info is in persistent player
 }
 
 // ---------------------------------------------------------
@@ -622,11 +624,7 @@ function formatChallengeType(type) {
 
 // Lower player functionality removed - using only persistent player now
 
-// Setup challenge control buttons - reveal button is now in persistent player
-function setupChallengeControls(challenge) {
-  // Store current challenge for reveal functionality
-  window.currentChallenge = challenge;
-}
+// Challenge controls functionality moved to persistent player
 
 
 
