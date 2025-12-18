@@ -28,6 +28,11 @@ h1 {
   margin-bottom: 6rem; /* Space for floating button */
 }
 
+/* Categories panel - remove bottom margin */
+#categories.panel {
+  margin-bottom: 0;
+}
+
 /* Hidden utility */
 .hidden {
   display: none;
