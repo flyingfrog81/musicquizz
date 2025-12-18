@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.11.0';
+const APP_VERSION = '0.11.1';
 
 
 // ---------------------------------------------------------
@@ -409,7 +409,14 @@ function initializeSpotifyPlayer() {
 
 // Update page title dynamically
 function updateTitle(newTitle) {
-  document.querySelector('h1').textContent = newTitle;
+  const h1 = document.querySelector('h1');
+  
+  // Show version number only on initial "Music Quiz" title
+  if (newTitle === 'Music Quiz') {
+    h1.innerHTML = `Music Quiz <span class="version-number">v${APP_VERSION}</span>`;
+  } else {
+    h1.textContent = newTitle;
+  }
 }
 
 // Render category buttons

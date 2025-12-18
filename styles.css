@@ -25,6 +25,14 @@ h1 {
   font-weight: 600;
 }
 
+.version-number {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #ccc;
+  margin-left: 0.5rem;
+  opacity: 0.6;
+}
+
 /* Container panels */
 .panel {
   padding: 1.25rem;
