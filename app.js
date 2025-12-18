@@ -248,56 +248,80 @@ async function exchangeAuthCodeForToken(authCode) {
   try {
     console.log('Exchanging authorization code for access token...');
     
-    // Try the backend service first (if deployed)
-    const backendUrl = 'https://your-vercel-app.vercel.app/api/auth'; // Update this URL
+    // Try different backend URLs - update with your actual Vercel deployment URL
+    const backendUrls = [
+      'https://musicquizz-flyingfrog81.vercel.app/api/auth',  // Most likely URL format
+      'https://musicquizz.vercel.app/api/auth',               // Alternative format
+      // Add your actual Vercel URL here when you get it
+    ];
     
-    const response = await fetch(backendUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code: authCode
-      })
-    });
+    let success = false;
+    
+    for (const backendUrl of backendUrls) {
+      try {
+        console.log(`Trying backend: ${backendUrl}`);
+        
+        const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code: authCode
+          })
+        });
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Token exchange successful');
-      
-      spotifyApi.accessToken = data.access_token;
-      
-      // Store token with expiration time
-      const expirationTime = Date.now() + (data.expires_in * 1000);
-      localStorage.setItem('spotify_access_token', data.access_token);
-      localStorage.setItem('spotify_token_expiration', expirationTime.toString());
-      
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      // Initialize Spotify Web Playback SDK
-      initializeSpotifyPlayer();
-      
-    } else {
-      throw new Error(`Backend service failed: ${response.status}`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Token exchange successful with:', backendUrl);
+          
+          spotifyApi.accessToken = data.access_token;
+          
+          // Store token with expiration time
+          const expirationTime = Date.now() + (data.expires_in * 1000);
+          localStorage.setItem('spotify_access_token', data.access_token);
+          localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+          
+          // Clean up URL
+          window.history.replaceState({}, document.title, window.location.pathname);
+          
+          // Initialize Spotify Web Playback SDK
+          initializeSpotifyPlayer();
+          
+          success = true;
+          break;
+        } else {
+          console.log(`Backend ${backendUrl} responded with status:`, response.status);
+        }
+      } catch (err) {
+        console.log(`Backend ${backendUrl} failed:`, err.message);
+        continue;
+      }
+    }
+    
+    if (!success) {
+      throw new Error('All backend services failed or not deployed yet');
     }
     
   } catch (error) {
     console.error('Token exchange failed:', error);
     
     // Show helpful message about backend setup
-    alert(`Got authorization code successfully! 🎉
+    alert(`🎉 Spotify authentication is working perfectly!
 
-However, to complete the authentication, you need to deploy a simple backend service.
+✅ Got authorization code: ${authCode.substring(0, 20)}...
 
-Next steps:
-1. Deploy the backend service to Vercel (free)
-2. Add your Spotify Client Secret to Vercel environment variables  
-3. Update the backend URL in the code
+❌ Backend service not found or not configured yet.
 
-For now, the authorization is working - we just need the token exchange service.
+Next steps to complete setup:
+1. Deploy to Vercel successfully (check deployment status)
+2. Add SPOTIFY_CLIENT_SECRET environment variable in Vercel
+3. Get your deployment URL and update the code
 
-Auth code: ${authCode.substring(0, 20)}...`);
+Your Vercel deployment URL should look like:
+https://musicquizz-xyz123.vercel.app
+
+Then update the backendUrls array in the code with your actual URL.`);
     
     // Clean up URL anyway
     window.history.replaceState({}, document.title, window.location.pathname);
