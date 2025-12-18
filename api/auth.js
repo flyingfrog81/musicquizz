@@ -1,7 +1,7 @@
 // Vercel serverless function to handle Spotify OAuth
 // This file should be placed at: /api/auth.js
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Enable CORS for your GitHub Pages domain
   res.setHeader('Access-Control-Allow-Origin', 'https://flyingfrog81.github.io');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -32,12 +32,16 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
+    // Create Basic Auth header manually
+    const credentials = `${CLIENT_ID}:${CLIENT_SECRET}`;
+    const encodedCredentials = btoa(credentials);
+    
     // Exchange authorization code for access token
     const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString('base64')}`
+        'Authorization': `Basic ${encodedCredentials}`
       },
       body: new URLSearchParams({
         grant_type: 'authorization_code',
