@@ -578,10 +578,6 @@ function showChallenge(challenge) {
   challengeContainer.innerHTML = `
     <h2>Challenge - Difficulty ${challenge.difficulty}</h2>
     <p class="challenge-type">Type: ${formatChallengeType(challenge.type)}</p>
-    
-    <div id="song-info" class="song-info hidden">
-      <div class="loading">Loading song information...</div>
-    </div>
   `;
 
   // Setup challenge controls (reveal button now in persistent player)
@@ -723,10 +719,13 @@ function updatePersistentPlayerAfterAuth() {
   }
 }
 
-// Reveal song information
+// Reveal song information in persistent player
 async function revealSongInfo(challenge) {
-  const songInfoDiv = document.getElementById("song-info");
-  songInfoDiv.classList.remove("hidden");
+  const trackInfoDiv = document.getElementById("current-track-info");
+  if (!trackInfoDiv) {
+    console.error('Track info div not found');
+    return;
+  }
   
   try {
     const trackId = extractSpotifyTrackId(challenge.spotify);
@@ -749,12 +748,12 @@ async function revealSongInfo(challenge) {
       console.error('oEmbed API error:', apiError);
       console.log('Falling back to challenge data for track:', trackId);
       // Fallback: Show the basic song info from challenge data
-      displayFallbackInfo(challenge, trackId);
+      displayFallbackInfoInPersistentPlayer(challenge, trackId);
     }
     
-  } catch (error) {
+    } catch (error) {
     console.error('Error revealing song info:', error);
-    songInfoDiv.innerHTML = `
+    trackInfoDiv.innerHTML = `
       <div class="error">
         <p>❌ Unable to load song information</p>
         <p class="error-detail">Showing basic info instead</p>
@@ -762,13 +761,13 @@ async function revealSongInfo(challenge) {
     `;
     
     // Even on error, show basic challenge info
-    setTimeout(() => displayFallbackInfo(challenge, null), 1000);
+    setTimeout(() => displayFallbackInfoInPersistentPlayer(challenge, null), 1000);
   }
 }
 
-// Display song information from Spotify oEmbed
+// Display song information from Spotify oEmbed in persistent player
 function displaySongInfo(data, challenge) {
-  const songInfoDiv = document.getElementById("song-info");
+  const trackInfoDiv = document.getElementById("current-track-info");
   
   // Parse Spotify oEmbed title which usually comes in format "Song Title by Artist Name"
   let songTitle = "Unknown Title";
@@ -810,35 +809,33 @@ function displaySongInfo(data, challenge) {
   
   const thumbnail = data.thumbnail_url || "";
   
-  songInfoDiv.innerHTML = `
+  trackInfoDiv.innerHTML = `
     <div class="song-details">
-      <h3>🎵 Song Revealed!</h3>
-      ${thumbnail ? `<img src="${thumbnail}" alt="Album cover" class="album-cover">` : ''}
+      <h4>🎵 Song Revealed!</h4>
+      ${thumbnail ? `<img src="${thumbnail}" alt="Album cover" class="album-cover" style="width: 60px; height: 60px;">` : ''}
       <div class="song-meta">
         <p><strong>Title:</strong> ${songTitle}</p>
         <p><strong>Artist:</strong> ${artistName}</p>
-        <p><strong>Source:</strong> Spotify</p>
       </div>
     </div>
   `;
 }
 
-// Fallback song info display
-function displayFallbackInfo(challenge, trackId) {
-  const songInfoDiv = document.getElementById("song-info");
+// Fallback song info display in persistent player
+function displayFallbackInfoInPersistentPlayer(challenge, trackId) {
+  const trackInfoDiv = document.getElementById("current-track-info");
   
   // Check if this is a placeholder URL
   const isPlaceholder = trackId && (trackId.startsWith('STUB') || trackId.startsWith('IT') || trackId.startsWith('80_') || trackId.startsWith('RC') || trackId.startsWith('MS') || trackId.startsWith('PA'));
   
-  songInfoDiv.innerHTML = `
+  trackInfoDiv.innerHTML = `
     <div class="song-details">
-      <h3>🎵 Song Revealed!</h3>
-      ${isPlaceholder ? '<div class="warning">⚠️ This is placeholder data - real Spotify data not available</div>' : ''}
+      <h4>🎵 Song Revealed!</h4>
+      ${isPlaceholder ? '<div class="warning">⚠️ This is placeholder data</div>' : ''}
       <div class="song-meta">
         <p><strong>Title:</strong> ${challenge.song || "Unknown Title"}</p>
         <p><strong>Artist:</strong> ${challenge.artist || "Unknown Artist"}</p>
-        ${trackId ? `<p><strong>Track ID:</strong> ${trackId}</p>` : ''}
-        ${!isPlaceholder ? `<p><a href="${challenge.spotify}" target="_blank">🔗 Open in Spotify</a></p>` : '<p>🔗 Placeholder URL - no real Spotify link</p>'}
+        ${!isPlaceholder ? `<p><a href="${challenge.spotify}" target="_blank">🔗 Spotify</a></p>` : ''}
       </div>
     </div>
   `;
@@ -867,16 +864,7 @@ function extractSpotifyTrackId(url) {
   return null;
 }
 
-// Show error message
-function showError(message) {
-  const songInfoDiv = document.getElementById("song-info");
-  songInfoDiv.classList.remove("hidden");
-  songInfoDiv.innerHTML = `
-    <div class="error">
-      <p>❌ ${message}</p>
-    </div>
-  `;
-}
+// Error handling now integrated into persistent player display functions
 
 // Ensure Spotify URL is in the correct format for app linking
 function getSpotifyUrl(url) {
