@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.7';
+const APP_VERSION = '0.8.8';
 
 
 // ---------------------------------------------------------
@@ -107,7 +107,7 @@ let songsData = {};
 async function loadSongsData() {
   try {
     console.log('Loading songs data from JSON...');
-    const response = await fetch('songs.json');
+    const response = await fetch('data/songs.json');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
