@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.10.1';
+const APP_VERSION = '0.11.0';
 
 
 // ---------------------------------------------------------
@@ -559,6 +559,12 @@ function initializePersistentPlayer() {
   document.body.insertBefore(playerContainer, document.body.firstChild);
 }
 
+// Function to detect mobile devices
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+         (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && window.innerWidth < 1024);
+}
+
 // Simple function to update the Spotify embed with a new track
 function updateSpotifyEmbed(spotifyUrl) {
   const container = document.getElementById('spotify-embed-container');
@@ -571,19 +577,42 @@ function updateSpotifyEmbed(spotifyUrl) {
     return;
   }
   
-  // Create Spotify embed iframe
-  container.innerHTML = `
-    <iframe 
-      style="border-radius:12px" 
-      src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
-      width="100%" 
-      height="152" 
-      frameBorder="0" 
-      allowfullscreen="" 
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-      loading="lazy">
-    </iframe>
-  `;
+  if (isMobileDevice()) {
+    // Mobile version: Show track info and Spotify app button
+    container.innerHTML = `
+      <div class="mobile-player">
+        <div class="mobile-track-info">
+          <div class="mobile-icon">🎵</div>
+          <div class="mobile-text">
+            <p class="mobile-notice">Mobile Device - Full Playback Available in Spotify App</p>
+            <div id="mobile-track-details" class="mobile-track-details">
+              <p class="loading-track">Loading track information...</p>
+            </div>
+          </div>
+        </div>
+        <button class="spotify-app-button" onclick="openInSpotifyApp('${spotifyUrl}')">
+          🎧 Open in Spotify App
+        </button>
+      </div>
+    `;
+    
+    // Load track information for mobile display
+    loadMobileTrackInfo(spotifyUrl);
+  } else {
+    // Desktop version: Standard embed
+    container.innerHTML = `
+      <iframe 
+        style="border-radius:12px" 
+        src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+        width="100%" 
+        height="152" 
+        frameBorder="0" 
+        allowfullscreen="" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+        loading="lazy">
+      </iframe>
+    `;
+  }
 }
 
 // Global variable to track current challenge (simplified)
@@ -734,6 +763,64 @@ function displayFallbackInfoInPersistentPlayer(challenge, trackId) {
 }
 
 
+
+// Load track information for mobile display
+async function loadMobileTrackInfo(spotifyUrl) {
+  const detailsContainer = document.getElementById('mobile-track-details');
+  if (!detailsContainer) return;
+  
+  try {
+    // Try to get song info from Spotify oEmbed API
+    const oembedUrl = `https://open.spotify.com/oembed?url=${encodeURIComponent(spotifyUrl)}&format=json`;
+    const response = await fetch(oembedUrl);
+    
+    if (response.ok) {
+      const data = await response.json();
+      let songTitle = "Unknown Title";
+      let artistName = "Unknown Artist";
+      
+      if (data.title) {
+        const titleParts = data.title.split(" by ");
+        if (titleParts.length >= 2) {
+          songTitle = titleParts[0];
+          artistName = titleParts.slice(1).join(" by ");
+        } else {
+          songTitle = data.title;
+        }
+      }
+      
+      detailsContainer.innerHTML = `
+        <p class="track-title"><strong>${songTitle}</strong></p>
+        <p class="track-artist">by ${artistName}</p>
+      `;
+    } else {
+      throw new Error('oEmbed failed');
+    }
+  } catch (error) {
+    // Fallback: Show basic message
+    detailsContainer.innerHTML = `
+      <p class="track-fallback">Spotify Track Ready</p>
+      <p class="track-hint">Tap the button above to play in Spotify</p>
+    `;
+  }
+}
+
+// Open Spotify URL in the native app
+function openInSpotifyApp(spotifyUrl) {
+  // Try to open in Spotify app first, fallback to web
+  window.open(spotifyUrl, '_blank');
+  
+  // Show user feedback
+  const button = event.target;
+  const originalText = button.innerHTML;
+  button.innerHTML = '✅ Opening Spotify...';
+  button.disabled = true;
+  
+  setTimeout(() => {
+    button.innerHTML = originalText;
+    button.disabled = false;
+  }, 2000);
+}
 
 // Extract Spotify track ID from various URL formats
 function extractSpotifyTrackId(url) {

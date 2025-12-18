@@ -574,3 +574,95 @@ button.completed:hover {
   background: #c82333 !important;
   transform: translateY(-1px);
 }
+
+/* Mobile player styles */
+.mobile-player {
+  background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+}
+
+.mobile-track-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.mobile-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.mobile-text {
+  flex: 1;
+}
+
+.mobile-notice {
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.mobile-track-details {
+  margin-top: 0.5rem;
+}
+
+.track-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: white;
+}
+
+.track-artist {
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.85;
+  color: white;
+}
+
+.loading-track, .track-fallback {
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.track-hint {
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0 0;
+  opacity: 0.7;
+}
+
+.spotify-app-button {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-weight: 600;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.spotify-app-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.spotify-app-button:active {
+  transform: translateY(0);
+}
+
+.spotify-app-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
