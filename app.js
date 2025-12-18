@@ -134,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (newChallengePersistentBtn) {
     newChallengePersistentBtn.onclick = () => renderCategories();
   }
+  
+  // Initialize persistent Spotify player
+  initializePersistentPlayer();
 });
 
 // ---------------------------------------------------------
@@ -425,6 +428,9 @@ function createSpotifyPlayer() {
     console.log('Spotify Player Ready with Device ID', device_id);
     spotifyApi.deviceId = device_id;
     spotifyApi.player = player;
+    
+    // Update persistent player controls
+    updatePersistentPlayerAfterAuth();
   });
 
   // Connect to the player!
@@ -565,6 +571,10 @@ function renderDifficulties(category) {
 
 // Render the selected challenge
 function showChallenge(challenge) {
+  // Set current track for persistent player
+  currentTrack = challenge.spotify;
+  updatePersistentPlayerTrackInfo(challenge);
+  
   challengeContainer.innerHTML = `
     <h2>Challenge - Difficulty ${challenge.difficulty}</h2>
     <p class="challenge-type">Type: ${formatChallengeType(challenge.type)}</p>
@@ -580,7 +590,7 @@ function showChallenge(challenge) {
     <div id="spotify-player" class="spotify-player"></div>
   `;
 
-  // Immediately load the Spotify player with overlay
+  // Load the Spotify player (now without overlay)
   loadSpotifyPlayer(challenge);
   setupChallengeControls(challenge);
 
@@ -646,7 +656,7 @@ async function loadSpotifyPlayer(challenge) {
     return;
   }
   
-  // Create our custom player with overlay
+  // Create our custom player without overlay
   playerDiv.innerHTML = `
     <div class="sdk-player-container">
       <div class="player-controls">
@@ -656,14 +666,6 @@ async function loadSpotifyPlayer(challenge) {
         <div class="volume-container">
           <span>🔊</span>
           <input type="range" id="volume-slider" min="0" max="100" value="70" onchange="setVolume(this.value)">
-        </div>
-      </div>
-      
-      <div class="player-overlay">
-        <div class="mystery-content">
-          <div class="mystery-icon">🎵</div>
-          <p>Ready to play...</p>
-          <p class="mystery-hint">Click play to start the music!</p>
         </div>
       </div>
       
@@ -681,24 +683,94 @@ function setupChallengeControls(challenge) {
   
   revealBtn.onclick = () => {
     revealSongInfo(challenge);
-    revealSpotifyPlayer(playerDiv, challenge.spotify);
+    // Player is always visible, no need to reveal it
   };
 }
 
 
 
 
-// Reveal the Spotify player by removing the overlay
-function revealSpotifyPlayer(playerDiv, spotifyUrl) {
-  const overlay = playerDiv.querySelector('.player-overlay');
-  const container = playerDiv.querySelector('.sdk-player-container');
+// Initialize persistent Spotify player that's always visible
+function initializePersistentPlayer() {
+  const playerContainer = document.createElement('div');
+  playerContainer.id = 'persistent-spotify-player';
+  playerContainer.innerHTML = `
+    <div class="persistent-player">
+      <h3>🎵 Spotify Player</h3>
+      <div id="persistent-player-content">
+        ${spotifyApi.accessToken ? createPlayerControls() : createAuthPrompt()}
+      </div>
+    </div>
+  `;
   
-  if (overlay) {
-    overlay.style.display = 'none';
+  // Add to the page - you can adjust where this appears
+  document.body.insertBefore(playerContainer, document.body.firstChild);
+}
+
+function createPlayerControls() {
+  return `
+    <div class="sdk-player-container">
+      <div class="player-controls">
+        <button id="persistent-play-btn" class="control-btn play" onclick="playCurrentTrack()">▶️</button>
+        <button id="persistent-pause-btn" class="control-btn pause" onclick="pauseTrack()">⏸️</button>
+        <button id="persistent-restart-btn" class="control-btn restart" onclick="restartTrack()">⏮️</button>
+        <div class="volume-container">
+          <span>🔊</span>
+          <input type="range" id="persistent-volume-slider" min="0" max="100" value="70" onchange="setVolume(this.value)">
+        </div>
+      </div>
+      
+      <div class="player-status" id="persistent-player-status">
+        Ready to play
+      </div>
+      
+      <div id="current-track-info" class="track-info">
+        No track selected
+      </div>
+    </div>
+  `;
+}
+
+function createAuthPrompt() {
+  return `
+    <div class="auth-required">
+      <p>Connect to Spotify to enable music playback:</p>
+      <button onclick="authenticateSpotify()" class="auth-button">
+        🎵 Connect to Spotify
+      </button>
+    </div>
+  `;
+}
+
+// Global variable to track current track
+let currentTrack = null;
+
+function playCurrentTrack() {
+  if (currentTrack) {
+    playTrack(currentTrack);
+  } else {
+    alert('Please select a challenge first to choose a track to play.');
   }
-  
-  if (container) {
-    container.classList.add('revealed');
+}
+
+function updatePersistentPlayerTrackInfo(challenge) {
+  const trackInfoElement = document.getElementById('current-track-info');
+  if (trackInfoElement) {
+    trackInfoElement.innerHTML = `
+      <div class="track-preview">
+        <strong>Ready to play:</strong> Challenge ${challenge.difficulty}
+        <br>
+        <small>${formatChallengeType(challenge.type)}</small>
+      </div>
+    `;
+  }
+}
+
+// Update persistent player when Spotify player is ready
+function updatePersistentPlayerAfterAuth() {
+  const persistentPlayerContent = document.getElementById('persistent-player-content');
+  if (persistentPlayerContent && spotifyApi.accessToken) {
+    persistentPlayerContent.innerHTML = createPlayerControls();
   }
 }
 
