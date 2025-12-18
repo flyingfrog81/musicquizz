@@ -140,53 +140,96 @@ document.addEventListener('DOMContentLoaded', function() {
 // ---------------------------------------------------------
 
 function initializeSpotifyAuth() {
+  console.log('Initializing Spotify auth...');
+  console.log('Current URL:', window.location.href);
+  console.log('Hash:', window.location.hash);
+  
   // Check if we have an access token in the URL (after redirect)
   const urlParams = new URLSearchParams(window.location.hash.substring(1));
   const accessToken = urlParams.get('access_token');
+  const expiresIn = urlParams.get('expires_in');
+  
+  console.log('Access token from URL:', accessToken ? 'Found' : 'Not found');
   
   if (accessToken) {
+    console.log('Setting access token from URL');
     spotifyApi.accessToken = accessToken;
+    
+    // Store token with expiration time
+    const expirationTime = Date.now() + (parseInt(expiresIn || '3600') * 1000);
+    localStorage.setItem('spotify_access_token', accessToken);
+    localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+    
     // Clean up URL
     window.history.replaceState({}, document.title, window.location.pathname);
     // Initialize Spotify Web Playback SDK
     initializeSpotifyPlayer();
   } else {
-    // Check if we have a stored token
+    // Check if we have a stored token that's not expired
     const storedToken = localStorage.getItem('spotify_access_token');
-    if (storedToken) {
-      spotifyApi.accessToken = storedToken;
-      initializeSpotifyPlayer();
+    const tokenExpiration = localStorage.getItem('spotify_token_expiration');
+    
+    console.log('Stored token:', storedToken ? 'Found' : 'Not found');
+    
+    if (storedToken && tokenExpiration) {
+      const isExpired = Date.now() > parseInt(tokenExpiration);
+      console.log('Token expired:', isExpired);
+      
+      if (!isExpired) {
+        console.log('Using stored token');
+        spotifyApi.accessToken = storedToken;
+        initializeSpotifyPlayer();
+      } else {
+        console.log('Token expired, clearing storage');
+        localStorage.removeItem('spotify_access_token');
+        localStorage.removeItem('spotify_token_expiration');
+      }
     }
   }
 }
 
 function authenticateSpotify() {
+  console.log('Starting Spotify authentication...');
+  console.log('Client ID:', SPOTIFY_CONFIG.clientId);
+  console.log('Redirect URI:', SPOTIFY_CONFIG.redirectUri);
+  
   const authUrl = `https://accounts.spotify.com/authorize?` +
     `client_id=${SPOTIFY_CONFIG.clientId}&` +
     `response_type=token&` +
     `redirect_uri=${encodeURIComponent(SPOTIFY_CONFIG.redirectUri)}&` +
-    `scope=${encodeURIComponent(SPOTIFY_CONFIG.scopes.join(' '))}`;
+    `scope=${encodeURIComponent(SPOTIFY_CONFIG.scopes.join(' '))}&` +
+    `show_dialog=true`; // Force login dialog to appear
   
+  console.log('Auth URL:', authUrl);
   window.location.href = authUrl;
 }
 
 function initializeSpotifyPlayer() {
-  if (!spotifyApi.accessToken) return;
+  if (!spotifyApi.accessToken) {
+    console.log('No access token available for player initialization');
+    return;
+  }
   
-  // Store token for future use
-  localStorage.setItem('spotify_access_token', spotifyApi.accessToken);
+  console.log('Initializing Spotify player...');
   
   // Load Spotify Web Playback SDK
   if (!window.Spotify) {
+    console.log('Loading Spotify SDK...');
     const script = document.createElement('script');
     script.src = 'https://sdk.scdn.co/spotify-player.js';
     script.onload = () => {
+      console.log('Spotify SDK loaded');
       window.onSpotifyWebPlaybackSDKReady = () => {
+        console.log('Spotify SDK ready');
         createSpotifyPlayer();
       };
     };
+    script.onerror = () => {
+      console.error('Failed to load Spotify SDK');
+    };
     document.head.appendChild(script);
   } else {
+    console.log('Spotify SDK already loaded');
     createSpotifyPlayer();
   }
 }
@@ -206,7 +249,16 @@ function createSpotifyPlayer() {
   player.addListener('authentication_error', ({ message }) => {
     console.error('Spotify Auth Error:', message);
     localStorage.removeItem('spotify_access_token');
+    localStorage.removeItem('spotify_token_expiration');
     spotifyApi.accessToken = null;
+    
+    // Show user that they need to re-authenticate
+    alert('Spotify authentication expired. Please reconnect to Spotify.');
+    
+    // Reload current challenge to show auth prompt again
+    if (window.location.pathname.includes('musicquizz')) {
+      window.location.reload();
+    }
   });
 
   player.addListener('account_error', ({ message }) => {
