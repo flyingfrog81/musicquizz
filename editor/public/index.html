@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Quiz Editor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Music Quiz Editor</h1>
+            <div class="auth-status">
+                <span id="auth-status">Checking authentication...</span>
+                <button id="auth-btn" style="display: none;" onclick="authenticateSpotify()">Connect to Spotify</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Authentication needed message -->
+            <div id="auth-needed" class="auth-message" style="display: none;">
+                <h2>🔐 Spotify Authentication Required</h2>
+                <p>To edit songs, you need to connect to Spotify to browse and select tracks from your playlists.</p>
+                <button onclick="authenticateSpotify()">Connect to Spotify</button>
+            </div>
+
+            <!-- Main editor interface -->
+            <div id="editor-interface" style="display: none;">
+                <!-- Playlist selector -->
+                <div class="playlist-selector">
+                    <h2>📝 Select Playlist to Browse</h2>
+                    <select id="playlist-select">
+                        <option value="">Loading playlists...</option>
+                    </select>
+                    <button id="load-playlist" onclick="loadPlaylistTracks()">Load Playlist</button>
+                </div>
+
+
+
+                <!-- Songs editor -->
+                <div class="songs-editor">
+                    <h2>🎯 Songs Database Editor</h2>
+                    <div id="songs-grid" class="categories-grid">
+                        <!-- Categories and difficulties will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Save section -->
+                <div class="save-section">
+                    <button id="save-btn" onclick="saveSongs()" class="save-button">
+                        💾 Save Songs Database
+                    </button>
+                    <div id="save-status" class="save-status"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Track selection modal -->
+    <div id="track-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Track for <span id="modal-category"></span> - Difficulty <span id="modal-difficulty"></span></h3>
+                <button class="modal-close" onclick="closeTrackModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Choose a track from the loaded playlist:</p>
+                <div id="modal-tracks" class="modal-tracks"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
