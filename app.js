@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.3';
+const APP_VERSION = '0.8.4';
 
 
 // ---------------------------------------------------------
@@ -21,22 +21,39 @@ const APP_VERSION = '0.8.3';
 const STORAGE_KEY = 'musicquiz_progress';
 
 function getProgress() {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : {};
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    console.log(`[DEBUG] Retrieved from localStorage:`, stored);
+    return stored ? JSON.parse(stored) : {};
+  } catch (error) {
+    console.error(`[DEBUG] Failed to get progress:`, error);
+    return {};
+  }
 }
 
 function saveProgress(progress) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  console.log(`[DEBUG] Saving progress to localStorage:`, progress);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    console.log(`[DEBUG] Progress saved successfully`);
+  } catch (error) {
+    console.error(`[DEBUG] Failed to save progress:`, error);
+  }
 }
 
 function markDifficultyCompleted(category, difficulty) {
+  console.log(`[DEBUG] Marking ${category} difficulty ${difficulty} as completed`);
   const progress = getProgress();
+  console.log(`[DEBUG] Current progress:`, progress);
   if (!progress[category]) {
     progress[category] = [];
   }
   if (!progress[category].includes(difficulty)) {
     progress[category].push(difficulty);
     saveProgress(progress);
+    console.log(`[DEBUG] Progress updated:`, progress);
+  } else {
+    console.log(`[DEBUG] Difficulty ${difficulty} already completed for ${category}`);
   }
 }
 
@@ -122,6 +139,20 @@ document.addEventListener('DOMContentLoaded', async function() {
   console.log(`🎵 Music Quiz App v${APP_VERSION} loaded successfully!`);
   console.log(`📅 Build: ${new Date().toISOString()}`);
   console.log(`🌐 Environment: ${window.location.hostname === 'flyingfrog81.github.io' ? 'Production (GitHub Pages)' : 'Development'}`);
+  
+  // Test localStorage availability
+  console.log(`[DEBUG] Testing localStorage availability...`);
+  try {
+    localStorage.setItem('test', 'test');
+    localStorage.removeItem('test');
+    console.log(`[DEBUG] localStorage is working`);
+    
+    // Show current progress
+    const currentProgress = getProgress();
+    console.log(`[DEBUG] Current stored progress:`, currentProgress);
+  } catch (error) {
+    console.error(`[DEBUG] localStorage is NOT available:`, error);
+  }
   
   // Load songs data first
   const songsLoaded = await loadSongsData();
