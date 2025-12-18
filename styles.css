@@ -8,10 +8,15 @@ body {
 }
 
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   text-align: center;
   padding: 1.5rem 1rem;
   background: #ffffff;
   border-bottom: 1px solid #e2e2e2;
+  z-index: 1001;
 }
 
 h1 {
@@ -545,17 +550,17 @@ button:active {
   }
 }
 
-/* Position the Spotify player at the top */
+/* Position the Spotify player below the header */
 #persistent-spotify-player {
   position: fixed;
-  top: 0;
+  top: 80px; /* Below the header */
   left: 0;
   right: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Add top margin to body to account for fixed player */
+/* Add top margin to body to account for fixed header + player */
 body {
-  padding-top: 280px;
+  padding-top: 360px; /* Header height + player height */
 }
