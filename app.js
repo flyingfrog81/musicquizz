@@ -252,7 +252,7 @@ async function exchangeAuthCodeForToken(authCode) {
     const backendUrls = [
       'https://musicquizz-flyingfrog81.vercel.app/api/auth',  // Most likely URL format
       'https://musicquizz.vercel.app/api/auth',               // Alternative format
-      // Add your actual Vercel URL here when you get it
+      'https://musicquizz-marcos-projects-9a10e30f.vercel.app/api/auth'
     ];
     
     let success = false;
