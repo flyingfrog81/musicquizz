@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.7.1';
+const APP_VERSION = '0.7.2';
 
 // ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG

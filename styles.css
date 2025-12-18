@@ -52,7 +52,6 @@ h1 {
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
   max-width: 600px;
-  margin-top: 1rem;
 }
 
 /* Buttons */
