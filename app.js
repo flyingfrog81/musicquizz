@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.10.0';
+const APP_VERSION = '0.10.1';
 
 
 // ---------------------------------------------------------
@@ -395,151 +395,13 @@ function initializeSpotifyPlayer() {
   // Embed player requires no complex setup
 }
 
-function createSpotifyPlayer() {
-  const player = new Spotify.Player({
-    name: 'Music Quiz Player',
-    getOAuthToken: cb => { cb(spotifyApi.accessToken); },
-    volume: 0.7
-  });
 
-  // Error handling
-  player.addListener('initialization_error', ({ message }) => {
-    console.error('Spotify Player Error:', message);
-  });
-
-  player.addListener('authentication_error', ({ message }) => {
-    console.error('Spotify Auth Error:', message);
-    localStorage.removeItem('spotify_access_token');
-    localStorage.removeItem('spotify_token_expiration');
-    spotifyApi.accessToken = null;
-    
-    // Show user that they need to re-authenticate
-    alert('Spotify authentication expired. Please reconnect to Spotify.');
-    
-    // Reload current challenge to show auth prompt again
-    if (window.location.pathname.includes('musicquizz')) {
-      window.location.reload();
-    }
-  });
-
-  player.addListener('account_error', ({ message }) => {
-    console.error('Spotify Account Error:', message);
-  });
-
-  player.addListener('playback_error', ({ message }) => {
-    console.error('Spotify Playback Error:', message);
-  });
-
-  // Playback status updates
-  player.addListener('player_state_changed', (state) => {
-    if (!state) return;
-    updatePlayerUI(state);
-  });
-
-  // Ready
-  player.addListener('ready', ({ device_id }) => {
-    console.log('Spotify Player Ready with Device ID', device_id);
-    spotifyApi.deviceId = device_id;
-    spotifyApi.player = player;
-    
-    // Player ready - using embed player, no additional setup needed
-  });
-
-  // Connect to the player!
-  player.connect();
-}
 
 // ---------------------------------------------------------
 // PLAYBACK CONTROL FUNCTIONS
 // ---------------------------------------------------------
 
-async function playTrack(spotifyUrl) {
-  if (!spotifyApi.player || !spotifyApi.deviceId) {
-    console.error('Spotify player not ready');
-    return;
-  }
-  
-  const trackId = extractSpotifyTrackId(spotifyUrl);
-  if (!trackId) return;
-  
-  try {
-    // Start playback on our device
-    const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${spotifyApi.deviceId}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        uris: [`spotify:track:${trackId}`]
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${spotifyApi.accessToken}`
-      }
-    });
-    
-    if (response.status === 204) {
-      updatePlayerStatus('Playing...');
-    } else {
-      console.error('Failed to start playback:', response.status);
-    }
-  } catch (error) {
-    console.error('Error playing track:', error);
-  }
-}
-
-async function pauseTrack() {
-  if (!spotifyApi.player) return;
-  
-  try {
-    await spotifyApi.player.pause();
-    updatePlayerStatus('Paused');
-  } catch (error) {
-    console.error('Error pausing track:', error);
-  }
-}
-
-async function restartTrack() {
-  if (!spotifyApi.player) return;
-  
-  try {
-    await spotifyApi.player.seek(0);
-    updatePlayerStatus('Restarted');
-  } catch (error) {
-    console.error('Error restarting track:', error);
-  }
-}
-
-async function setVolume(volume) {
-  if (!spotifyApi.player) return;
-  
-  try {
-    await spotifyApi.player.setVolume(volume / 100);
-  } catch (error) {
-    console.error('Error setting volume:', error);
-  }
-}
-
-function updatePlayerStatus(status) {
-  const statusElement = document.getElementById('player-status');
-  if (statusElement) {
-    statusElement.textContent = status;
-  }
-}
-
-function updatePlayerUI(state) {
-  const playBtn = document.getElementById('play-btn');
-  const pauseBtn = document.getElementById('pause-btn');
-  
-  if (!playBtn || !pauseBtn) return;
-  
-  if (state.paused) {
-    playBtn.style.opacity = '1';
-    pauseBtn.style.opacity = '0.5';
-    updatePlayerStatus('Paused');
-  } else {
-    playBtn.style.opacity = '0.5';
-    pauseBtn.style.opacity = '1';
-    updatePlayerStatus('Playing');
-  }
-}
+// Playback functions removed - using Spotify embed player instead
 
 // ---------------------------------------------------------
 // RENDER FUNCTIONS
@@ -672,11 +534,6 @@ function formatChallengeType(type) {
   }
 }
 
-// Lower player functionality removed - using only persistent player now
-
-// Challenge controls functionality moved to persistent player
-
-
 
 
 // Initialize persistent Spotify player that's always visible
@@ -752,7 +609,7 @@ function revealCurrentSong() {
   }
 }
 
-// Simplified - no auth needed for Spotify embeds
+
 
 // Reveal song information in persistent player
 async function revealSongInfo(challenge) {
@@ -901,16 +758,4 @@ function extractSpotifyTrackId(url) {
 
 // Error handling now integrated into persistent player display functions
 
-// Ensure Spotify URL is in the correct format for app linking
-function getSpotifyUrl(url) {
-  if (!url) return "";
-  // Remove embed path if present and ensure it's a regular Spotify URL
-  if (url.includes("/embed/")) {
-    const parts = url.split("/embed/track/");
-    if (parts.length > 1) {
-      const trackId = parts[1].split("?")[0];
-      return `https://open.spotify.com/track/${trackId}`;
-    }
-  }
-  return url;
-}
+

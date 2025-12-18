@@ -3,16 +3,16 @@
     {
       "difficulty": 1,
       "type": "guess the title and artist",
-      "song": "Born For One Thing",
-      "artist": "Gojira",
-      "spotify": "https://open.spotify.com/track/61GkJ0y15jxDyBrdcb6PqR"
+      "song": "Song 2",
+      "artist": "Artist 2",
+      "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6"
     },
     {
       "difficulty": 2,
       "type": "guess the title and artist",
-      "song": "Song 2",
-      "artist": "Artist 2",
-      "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6"
+      "song": "Born For One Thing",
+      "artist": "Gojira",
+      "spotify": "https://open.spotify.com/track/61GkJ0y15jxDyBrdcb6PqR"
     },
     {
       "difficulty": 3,
