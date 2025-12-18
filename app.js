@@ -24,10 +24,10 @@ const SPOTIFY_CONFIG = {
 
 // ⚠️ SETUP INSTRUCTIONS:
 // 1. Go to https://developer.spotify.com/dashboard
-// 2. Create a new app or edit your existing app
-// 3. In Settings, add 'https://flyingfrog81.github.io/musicquizz/' as a Redirect URI
-// 4. IMPORTANT: Enable "Implicit Grant" flow in your app settings
-// 5. Copy your Client ID and replace it in the SPOTIFY_CONFIG above
+// 2. Click on your app, then look for "App settings" or "Edit settings"
+// 3. Add 'https://flyingfrog81.github.io/musicquizz/' as a Redirect URI
+// 4. Note: If you see "Web API" settings, make sure they're enabled
+// 5. Client ID is already set below - no changes needed
 
 let spotifyApi = {
   accessToken: null,
@@ -155,8 +155,28 @@ function initializeSpotifyAuth() {
   
   if (hashError || searchError) {
     const error = hashError || searchError;
+    const authMethod = localStorage.getItem('spotify_auth_method');
+    
     console.error('Spotify auth error:', error);
-    alert(`Spotify authentication error: ${error}. Please check your Spotify app settings.`);
+    
+    // If we got unsupported_response_type with implicit grant, try authorization code flow
+    if (error === 'unsupported_response_type' && authMethod === 'implicit') {
+      console.log('Implicit grant not supported, trying authorization code flow...');
+      localStorage.setItem('spotify_auth_method', 'code');
+      
+      const codeAuthUrl = `https://accounts.spotify.com/authorize?` +
+        `client_id=${SPOTIFY_CONFIG.clientId}&` +
+        `response_type=code&` +
+        `redirect_uri=${encodeURIComponent(SPOTIFY_CONFIG.redirectUri)}&` +
+        `scope=${encodeURIComponent(SPOTIFY_CONFIG.scopes.join(' '))}&` +
+        `show_dialog=true`;
+      
+      console.log('Trying authorization code Auth URL:', codeAuthUrl);
+      window.location.href = codeAuthUrl;
+      return;
+    }
+    
+    alert(`Spotify authentication error: ${error}. Your app might need different settings in the Spotify Developer Dashboard.`);
     return;
   }
   
@@ -164,10 +184,14 @@ function initializeSpotifyAuth() {
   const accessToken = hashParams.get('access_token');
   const expiresIn = hashParams.get('expires_in');
   
+  // Check if we have an authorization code (authorization code flow)
+  const authCode = searchParams.get('code');
+  
   console.log('Access token from hash:', accessToken ? 'Found' : 'Not found');
+  console.log('Auth code from search params:', authCode ? 'Found' : 'Not found');
   
   if (accessToken) {
-    console.log('Setting access token from hash');
+    console.log('Setting access token from hash (implicit grant)');
     spotifyApi.accessToken = accessToken;
     
     // Store token with expiration time
@@ -180,6 +204,23 @@ function initializeSpotifyAuth() {
     
     // Initialize Spotify Web Playback SDK
     initializeSpotifyPlayer();
+  } else if (authCode) {
+    console.log('Got authorization code, but need backend service to exchange it');
+    console.log('Auth code:', authCode);
+    
+    // For now, show a helpful message
+    alert(`Success! Got authorization code: ${authCode.substring(0, 20)}...
+
+Unfortunately, authorization code flow requires a backend server to securely exchange the code for a token.
+
+For now, please:
+1. Check your Spotify app settings for "Implicit Grant" or "Client Credentials" options
+2. Or we can set up a simple backend service
+
+The implicit grant flow (response_type=token) is what we need for a frontend-only app.`);
+    
+    // Clean up URL
+    window.history.replaceState({}, document.title, window.location.pathname);
   } else {
     // Check if we have a stored token that's not expired
     const storedToken = localStorage.getItem('spotify_access_token');
@@ -211,15 +252,20 @@ function authenticateSpotify() {
   console.log('Client ID:', SPOTIFY_CONFIG.clientId);
   console.log('Redirect URI:', SPOTIFY_CONFIG.redirectUri);
   
-  const authUrl = `https://accounts.spotify.com/authorize?` +
+  // Try implicit grant flow first (works if enabled)
+  const implicitAuthUrl = `https://accounts.spotify.com/authorize?` +
     `client_id=${SPOTIFY_CONFIG.clientId}&` +
     `response_type=token&` +
     `redirect_uri=${encodeURIComponent(SPOTIFY_CONFIG.redirectUri)}&` +
     `scope=${encodeURIComponent(SPOTIFY_CONFIG.scopes.join(' '))}&` +
-    `show_dialog=true`; // Force login dialog to appear
+    `show_dialog=true`;
   
-  console.log('Auth URL:', authUrl);
-  window.location.href = authUrl;
+  console.log('Trying implicit grant Auth URL:', implicitAuthUrl);
+  
+  // Store that we're trying implicit grant first
+  localStorage.setItem('spotify_auth_method', 'implicit');
+  
+  window.location.href = implicitAuthUrl;
 }
 
 function initializeSpotifyPlayer() {
