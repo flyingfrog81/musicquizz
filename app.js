@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.4';
+const APP_VERSION = '0.8.5';
 
 
 // ---------------------------------------------------------
@@ -567,9 +567,6 @@ function renderCategories() {
   
   // Reset title to original
   updateTitle('Music Quiz');
-  
-  // Clear progress tracking
-  clearProgress();
   
   // Reset Spotify embed and challenge info
   const embedContainer = document.getElementById('spotify-embed-container');
