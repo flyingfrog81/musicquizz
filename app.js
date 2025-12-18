@@ -10,7 +10,45 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.2';
+const APP_VERSION = '0.8.3';
+
+
+// ---------------------------------------------------------
+// PROGRESS TRACKING
+// ---------------------------------------------------------
+
+// Track completed challenges in localStorage
+const STORAGE_KEY = 'musicquiz_progress';
+
+function getProgress() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return stored ? JSON.parse(stored) : {};
+}
+
+function saveProgress(progress) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+function markDifficultyCompleted(category, difficulty) {
+  const progress = getProgress();
+  if (!progress[category]) {
+    progress[category] = [];
+  }
+  if (!progress[category].includes(difficulty)) {
+    progress[category].push(difficulty);
+    saveProgress(progress);
+  }
+}
+
+function isDifficultyCompleted(category, difficulty) {
+  const progress = getProgress();
+  return progress[category] && progress[category].includes(difficulty);
+}
+
+function clearProgress() {
+  localStorage.removeItem(STORAGE_KEY);
+  console.log('Progress cleared');
+}
 
 // ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG
@@ -45,59 +83,33 @@ let spotifyApi = {
 // STATE
 // ---------------------------------------------------------
 
-let songsData = {
-  "classic": [
-    { "difficulty": 1, "type": "guess-title", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/7037bX3jdaUWUAXL12CHGy?si=8f032fd38d8443e8" },
-    { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6" },
-    { "difficulty": 3, "type": "guess-title", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/CLASSIC3" },
-    { "difficulty": 4, "type": "guess-artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/CLASSIC4" },
-    { "difficulty": 5, "type": "guess-title", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/CLASSIC5" },
-    { "difficulty": 6, "type": "guess-artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/CLASSIC6" },
-    { "difficulty": 7, "type": "guess-title", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/CLASSIC7" },
-    { "difficulty": 8, "type": "guess-artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/CLASSIC8" },
-    { "difficulty": 9, "type": "guess-title", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/CLASSIC9" },
-    { "difficulty": 10, "type": "guess-title", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/CLASSIC10" }
-  ],
+// Songs data - loaded dynamically from JSON file
+let songsData = {};
 
-  "italian": [
-    { "difficulty": 1, "type": "guess-title", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/IT1" },
-    { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/IT2" },
-    { "difficulty": 3, "type": "guess the title and artist", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/IT3" },
-    { "difficulty": 4, "type": "guess the title and artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/IT4" },
-    { "difficulty": 5, "type": "guess the title and artist", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/IT5" },
-    { "difficulty": 6, "type": "guess the title and artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/IT6" },
-    { "difficulty": 7, "type": "guess the title and artist", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/IT7" },
-    { "difficulty": 8, "type": "guess the title and artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/IT8" },
-    { "difficulty": 9, "type": "guess the title and artist", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/IT9" },
-    { "difficulty": 10, "type": "guess the title and artist", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/IT10" }
-  ],
-
-  "sing-along": [
-    { "difficulty": 1, "type": "continue-lyrics", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/SING1" },
-    { "difficulty": 2, "type": "continue-lyrics", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/SING2" },
-    { "difficulty": 3, "type": "continue-lyrics", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/SING3" },
-    { "difficulty": 4, "type": "continue-lyrics", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/SING4" },
-    { "difficulty": 5, "type": "continue-lyrics", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/SING5" },
-    { "difficulty": 6, "type": "continue-lyrics", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/SING6" },
-    { "difficulty": 7, "type": "continue-lyrics", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/SING7" },
-    { "difficulty": 8, "type": "continue-lyrics", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/SING8" },
-    { "difficulty": 9, "type": "continue-lyrics", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/SING9" },
-    { "difficulty": 10, "type": "continue-lyrics", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/SING10" }
-  ],
-
-  "movie-soundtrack": [
-    { "difficulty": 1, "type": "guess the movie", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/MS1" },
-    { "difficulty": 2, "type": "guess the movie", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/MS2" },
-    { "difficulty": 3, "type": "guess the movie", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/MS3" },
-    { "difficulty": 4, "type": "guess the movie", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/MS4" },
-    { "difficulty": 5, "type": "guess the movie", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/MS5" },
-    { "difficulty": 6, "type": "guess the movie", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/MS6" },
-    { "difficulty": 7, "type": "guess the movie", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/MS7" },
-    { "difficulty": 8, "type": "guess the movie", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/MS8" },
-    { "difficulty": 9, "type": "guess the movie", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/MS9" },
-    { "difficulty": 10, "type": "guess the movie", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/MS10" }
-  ]
-};
+// Load songs data from JSON file
+async function loadSongsData() {
+  try {
+    console.log('Loading songs data from JSON...');
+    const response = await fetch('songs.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    songsData = await response.json();
+    console.log('Songs data loaded successfully:', Object.keys(songsData));
+    return true;
+  } catch (error) {
+    console.error('Failed to load songs data:', error);
+    // Fallback: show error message to user
+    document.body.innerHTML = `
+      <div style="text-align: center; padding: 2rem; color: #dc3545;">
+        <h2>⚠️ Unable to Load Songs Database</h2>
+        <p>Failed to load songs data from server.</p>
+        <p>Error: ${error.message}</p>
+      </div>
+    `;
+    return false;
+  }
+}
 let selectedCategory = null;
 
 // ---------------------------------------------------------
@@ -105,11 +117,17 @@ let selectedCategory = null;
 // ---------------------------------------------------------
 
 // Initialize the app when the page loads
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
   // Log version info for debugging
   console.log(`🎵 Music Quiz App v${APP_VERSION} loaded successfully!`);
   console.log(`📅 Build: ${new Date().toISOString()}`);
   console.log(`🌐 Environment: ${window.location.hostname === 'flyingfrog81.github.io' ? 'Production (GitHub Pages)' : 'Development'}`);
+  
+  // Load songs data first
+  const songsLoaded = await loadSongsData();
+  if (!songsLoaded) {
+    return; // Error message already shown by loadSongsData()
+  }
   
   initializeSpotifyAuth();
   renderCategories();
@@ -503,6 +521,7 @@ function renderCategories() {
   for (const category in songsData) {
     const btn = document.createElement("button");
     btn.textContent = formatCategoryName(category);
+    btn.id = `category-${category}`;
     btn.onclick = () => selectCategory(category);
     categoriesContainer.appendChild(btn);
   }
@@ -517,6 +536,9 @@ function renderCategories() {
   
   // Reset title to original
   updateTitle('Music Quiz');
+  
+  // Clear progress tracking
+  clearProgress();
   
   // Reset Spotify embed and challenge info
   const embedContainer = document.getElementById('spotify-embed-container');
@@ -544,7 +566,19 @@ function renderDifficulties(category) {
   songsData[category].forEach(challenge => {
     const btn = document.createElement("button");
     btn.textContent = challenge.difficulty;
-    btn.onclick = () => showChallenge(challenge);
+    btn.id = `difficulty-${category}-${challenge.difficulty}`;
+    
+    // Add completed class if already done
+    if (isDifficultyCompleted(category, challenge.difficulty)) {
+      btn.classList.add('completed');
+    }
+    
+    btn.onclick = () => {
+      markDifficultyCompleted(category, challenge.difficulty);
+      btn.classList.add('completed');
+      showChallenge(challenge);
+    };
+    
     difficultiesContainer.appendChild(btn);
   });
 
