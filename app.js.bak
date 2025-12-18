@@ -10,62 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.7';
-
-
-// ---------------------------------------------------------
-// PROGRESS TRACKING
-// ---------------------------------------------------------
-
-// Track completed challenges in localStorage
-const STORAGE_KEY = 'musicquiz_progress';
-
-function getProgress() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    console.log(`[DEBUG] Retrieved from localStorage:`, stored);
-    return stored ? JSON.parse(stored) : {};
-  } catch (error) {
-    console.error(`[DEBUG] Failed to get progress:`, error);
-    return {};
-  }
-}
-
-function saveProgress(progress) {
-  console.log(`[DEBUG] Saving progress to localStorage:`, progress);
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-    console.log(`[DEBUG] Progress saved successfully`);
-  } catch (error) {
-    console.error(`[DEBUG] Failed to save progress:`, error);
-  }
-}
-
-function markDifficultyCompleted(category, difficulty) {
-  console.log(`[DEBUG] Marking ${category} difficulty ${difficulty} as completed`);
-  const progress = getProgress();
-  console.log(`[DEBUG] Current progress:`, progress);
-  if (!progress[category]) {
-    progress[category] = [];
-  }
-  if (!progress[category].includes(difficulty)) {
-    progress[category].push(difficulty);
-    saveProgress(progress);
-    console.log(`[DEBUG] Progress updated:`, progress);
-  } else {
-    console.log(`[DEBUG] Difficulty ${difficulty} already completed for ${category}`);
-  }
-}
-
-function isDifficultyCompleted(category, difficulty) {
-  const progress = getProgress();
-  return progress[category] && progress[category].includes(difficulty);
-}
-
-function clearProgress() {
-  localStorage.removeItem(STORAGE_KEY);
-  console.log('Progress cleared');
-}
+const APP_VERSION = '0.8.3';
 
 // ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG
@@ -100,33 +45,59 @@ let spotifyApi = {
 // STATE
 // ---------------------------------------------------------
 
-// Songs data - loaded dynamically from JSON file
-let songsData = {};
+let songsData = {
+  "classic": [
+    { "difficulty": 1, "type": "guess-title", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/7037bX3jdaUWUAXL12CHGy?si=8f032fd38d8443e8" },
+    { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6" },
+    { "difficulty": 3, "type": "guess-title", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/CLASSIC3" },
+    { "difficulty": 4, "type": "guess-artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/CLASSIC4" },
+    { "difficulty": 5, "type": "guess-title", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/CLASSIC5" },
+    { "difficulty": 6, "type": "guess-artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/CLASSIC6" },
+    { "difficulty": 7, "type": "guess-title", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/CLASSIC7" },
+    { "difficulty": 8, "type": "guess-artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/CLASSIC8" },
+    { "difficulty": 9, "type": "guess-title", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/CLASSIC9" },
+    { "difficulty": 10, "type": "guess-title", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/CLASSIC10" }
+  ],
 
-// Load songs data from JSON file
-async function loadSongsData() {
-  try {
-    console.log('Loading songs data from JSON...');
-    const response = await fetch('songs.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    songsData = await response.json();
-    console.log('Songs data loaded successfully:', Object.keys(songsData));
-    return true;
-  } catch (error) {
-    console.error('Failed to load songs data:', error);
-    // Fallback: show error message to user
-    document.body.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: #dc3545;">
-        <h2>⚠️ Unable to Load Songs Database</h2>
-        <p>Failed to load songs data from server.</p>
-        <p>Error: ${error.message}</p>
-      </div>
-    `;
-    return false;
-  }
-}
+  "italian": [
+    { "difficulty": 1, "type": "guess-title", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/IT1" },
+    { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/IT2" },
+    { "difficulty": 3, "type": "guess the title and artist", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/IT3" },
+    { "difficulty": 4, "type": "guess the title and artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/IT4" },
+    { "difficulty": 5, "type": "guess the title and artist", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/IT5" },
+    { "difficulty": 6, "type": "guess the title and artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/IT6" },
+    { "difficulty": 7, "type": "guess the title and artist", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/IT7" },
+    { "difficulty": 8, "type": "guess the title and artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/IT8" },
+    { "difficulty": 9, "type": "guess the title and artist", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/IT9" },
+    { "difficulty": 10, "type": "guess the title and artist", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/IT10" }
+  ],
+
+  "sing-along": [
+    { "difficulty": 1, "type": "continue-lyrics", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/SING1" },
+    { "difficulty": 2, "type": "continue-lyrics", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/SING2" },
+    { "difficulty": 3, "type": "continue-lyrics", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/SING3" },
+    { "difficulty": 4, "type": "continue-lyrics", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/SING4" },
+    { "difficulty": 5, "type": "continue-lyrics", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/SING5" },
+    { "difficulty": 6, "type": "continue-lyrics", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/SING6" },
+    { "difficulty": 7, "type": "continue-lyrics", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/SING7" },
+    { "difficulty": 8, "type": "continue-lyrics", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/SING8" },
+    { "difficulty": 9, "type": "continue-lyrics", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/SING9" },
+    { "difficulty": 10, "type": "continue-lyrics", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/SING10" }
+  ],
+
+  "movie-soundtrack": [
+    { "difficulty": 1, "type": "guess the movie", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/MS1" },
+    { "difficulty": 2, "type": "guess the movie", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/MS2" },
+    { "difficulty": 3, "type": "guess the movie", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/MS3" },
+    { "difficulty": 4, "type": "guess the movie", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/MS4" },
+    { "difficulty": 5, "type": "guess the movie", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/MS5" },
+    { "difficulty": 6, "type": "guess the movie", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/MS6" },
+    { "difficulty": 7, "type": "guess the movie", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/MS7" },
+    { "difficulty": 8, "type": "guess the movie", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/MS8" },
+    { "difficulty": 9, "type": "guess the movie", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/MS9" },
+    { "difficulty": 10, "type": "guess the movie", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/MS10" }
+  ]
+};
 let selectedCategory = null;
 
 // ---------------------------------------------------------
@@ -134,31 +105,11 @@ let selectedCategory = null;
 // ---------------------------------------------------------
 
 // Initialize the app when the page loads
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
   // Log version info for debugging
   console.log(`🎵 Music Quiz App v${APP_VERSION} loaded successfully!`);
   console.log(`📅 Build: ${new Date().toISOString()}`);
   console.log(`🌐 Environment: ${window.location.hostname === 'flyingfrog81.github.io' ? 'Production (GitHub Pages)' : 'Development'}`);
-  
-  // Test localStorage availability
-  console.log(`[DEBUG] Testing localStorage availability...`);
-  try {
-    localStorage.setItem('test', 'test');
-    localStorage.removeItem('test');
-    console.log(`[DEBUG] localStorage is working`);
-    
-    // Show current progress
-    const currentProgress = getProgress();
-    console.log(`[DEBUG] Current stored progress:`, currentProgress);
-  } catch (error) {
-    console.error(`[DEBUG] localStorage is NOT available:`, error);
-  }
-  
-  // Load songs data first
-  const songsLoaded = await loadSongsData();
-  if (!songsLoaded) {
-    return; // Error message already shown by loadSongsData()
-  }
   
   initializeSpotifyAuth();
   renderCategories();
@@ -166,11 +117,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Setup persistent New Challenge button
   const newChallengePersistentBtn = document.getElementById('btn-new-challenge-persistent');
   if (newChallengePersistentBtn) {
-    newChallengePersistentBtn.onclick = () => {
-      console.log('[DEBUG] New Challenge clicked - clearing all progress');
-      clearProgress();
-      renderCategories();
-    };
+    newChallengePersistentBtn.onclick = () => renderCategories();
   }
   
   // Initialize persistent Spotify player
@@ -571,6 +518,9 @@ function renderCategories() {
   
   // Reset title to original
   updateTitle('Music Quiz');
+  
+  // Clear progress tracking
+  clearProgress();
   
   // Reset Spotify embed and challenge info
   const embedContainer = document.getElementById('spotify-embed-container');

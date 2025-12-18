@@ -562,3 +562,15 @@ button:active {
 body {
   padding-top: 80px; /* Just for the fixed header */
 }
+
+/* Completed difficulty button styling */
+button.completed {
+  background: #dc3545 !important;
+  color: white !important;
+  border: 2px solid #a71e2a !important;
+}
+
+button.completed:hover {
+  background: #c82333 !important;
+  transform: translateY(-1px);
+}
