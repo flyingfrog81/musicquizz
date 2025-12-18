@@ -3,9 +3,9 @@
     {
       "difficulty": 1,
       "type": "guess the title and artist",
-      "song": "Song 1",
-      "artist": "Artist 1",
-      "spotify": "https://open.spotify.com/track/7037bX3jdaUWUAXL12CHGy?si=8f032fd38d8443e8"
+      "song": "Born For One Thing",
+      "artist": "Gojira",
+      "spotify": "https://open.spotify.com/track/61GkJ0y15jxDyBrdcb6PqR"
     },
     {
       "difficulty": 2,
@@ -17,9 +17,9 @@
     {
       "difficulty": 3,
       "type": "guess the title and artist",
-      "song": "Messaggi a nessuno",
-      "artist": "Giorgio Canali, Rossofuoco",
-      "spotify": "https://open.spotify.com/track/0lGxH8riUum82U7bwMwsjv"
+      "song": "Song 9",
+      "artist": "Artist 9",
+      "spotify": "https://open.spotify.com/track/CLASSIC9"
     },
     {
       "difficulty": 4,
@@ -45,23 +45,23 @@
     {
       "difficulty": 7,
       "type": "guess the title and artist",
-      "song": "Song 7",
-      "artist": "Artist 7",
-      "spotify": "https://open.spotify.com/track/CLASSIC7"
-    },
-    {
-      "difficulty": 8,
-      "type": "guess the title and artist",
       "song": "Song 8",
       "artist": "Artist 8",
       "spotify": "https://open.spotify.com/track/CLASSIC8"
     },
     {
+      "difficulty": 8,
+      "type": "guess the title and artist",
+      "song": "Messaggi a nessuno",
+      "artist": "Giorgio Canali, Rossofuoco",
+      "spotify": "https://open.spotify.com/track/0lGxH8riUum82U7bwMwsjv"
+    },
+    {
       "difficulty": 9,
       "type": "guess the title and artist",
-      "song": "Song 9",
-      "artist": "Artist 9",
-      "spotify": "https://open.spotify.com/track/CLASSIC9"
+      "song": "Song 7",
+      "artist": "Artist 7",
+      "spotify": "https://open.spotify.com/track/CLASSIC7"
     },
     {
       "difficulty": 10,
@@ -89,9 +89,9 @@
     {
       "difficulty": 3,
       "type": "guess the title and artist",
-      "song": "Song 3",
-      "artist": "Artist 3",
-      "spotify": "https://open.spotify.com/track/IT3"
+      "song": "Song 8",
+      "artist": "Artist 8",
+      "spotify": "https://open.spotify.com/track/IT8"
     },
     {
       "difficulty": 4,
@@ -117,23 +117,23 @@
     {
       "difficulty": 7,
       "type": "guess the title and artist",
-      "song": "Song 7",
-      "artist": "Artist 7",
-      "spotify": "https://open.spotify.com/track/IT7"
+      "song": "Song 3",
+      "artist": "Artist 3",
+      "spotify": "https://open.spotify.com/track/IT3"
     },
     {
       "difficulty": 8,
       "type": "guess the title and artist",
-      "song": "Song 8",
-      "artist": "Artist 8",
-      "spotify": "https://open.spotify.com/track/IT8"
+      "song": "Song 9",
+      "artist": "Artist 9",
+      "spotify": "https://open.spotify.com/track/IT9"
     },
     {
       "difficulty": 9,
       "type": "guess the title and artist",
-      "song": "Song 9",
-      "artist": "Artist 9",
-      "spotify": "https://open.spotify.com/track/IT9"
+      "song": "TAKEDOWN (JEONGYEON, JIHYO, CHAEYOUNG)",
+      "artist": "TWICE",
+      "spotify": "https://open.spotify.com/track/1rKQjUhF9zFJmuUotr3VkV"
     },
     {
       "difficulty": 10,
