@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.8';
+const APP_VERSION = '0.9.0';
 
 
 // ---------------------------------------------------------

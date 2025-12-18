@@ -1,53 +1,290 @@
 {
   "classic": [
-    { "difficulty": 1, "type": "guess the title and artist", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/7037bX3jdaUWUAXL12CHGy?si=8f032fd38d8443e8" },
-    { "difficulty": 2, "type": "guess the title and artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6" },
-    { "difficulty": 3, "type": "guess the title and artist", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/CLASSIC3" },
-    { "difficulty": 4, "type": "guess the title and artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/CLASSIC4" },
-    { "difficulty": 5, "type": "guess the title and artist", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/CLASSIC5" },
-    { "difficulty": 6, "type": "guess the title and artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/CLASSIC6" },
-    { "difficulty": 7, "type": "guess the title and artist", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/CLASSIC7" },
-    { "difficulty": 8, "type": "guess the title and artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/CLASSIC8" },
-    { "difficulty": 9, "type": "guess the title and artist", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/CLASSIC9" },
-    { "difficulty": 10, "type": "guess the title and artist", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/CLASSIC10" }
+    {
+      "difficulty": 1,
+      "type": "guess the title and artist",
+      "song": "Song 1",
+      "artist": "Artist 1",
+      "spotify": "https://open.spotify.com/track/7037bX3jdaUWUAXL12CHGy?si=8f032fd38d8443e8"
+    },
+    {
+      "difficulty": 2,
+      "type": "guess the title and artist",
+      "song": "Song 2",
+      "artist": "Artist 2",
+      "spotify": "https://open.spotify.com/track/6oC8FuowgLT4ZSlXECLCNX?si=34328ab1b2124bc6"
+    },
+    {
+      "difficulty": 3,
+      "type": "guess the title and artist",
+      "song": "Messaggi a nessuno",
+      "artist": "Giorgio Canali, Rossofuoco",
+      "spotify": "https://open.spotify.com/track/0lGxH8riUum82U7bwMwsjv"
+    },
+    {
+      "difficulty": 4,
+      "type": "guess the title and artist",
+      "song": "Song 4",
+      "artist": "Artist 4",
+      "spotify": "https://open.spotify.com/track/CLASSIC4"
+    },
+    {
+      "difficulty": 5,
+      "type": "guess the title and artist",
+      "song": "Song 5",
+      "artist": "Artist 5",
+      "spotify": "https://open.spotify.com/track/CLASSIC5"
+    },
+    {
+      "difficulty": 6,
+      "type": "guess the title and artist",
+      "song": "Song 6",
+      "artist": "Artist 6",
+      "spotify": "https://open.spotify.com/track/CLASSIC6"
+    },
+    {
+      "difficulty": 7,
+      "type": "guess the title and artist",
+      "song": "Song 7",
+      "artist": "Artist 7",
+      "spotify": "https://open.spotify.com/track/CLASSIC7"
+    },
+    {
+      "difficulty": 8,
+      "type": "guess the title and artist",
+      "song": "Song 8",
+      "artist": "Artist 8",
+      "spotify": "https://open.spotify.com/track/CLASSIC8"
+    },
+    {
+      "difficulty": 9,
+      "type": "guess the title and artist",
+      "song": "Song 9",
+      "artist": "Artist 9",
+      "spotify": "https://open.spotify.com/track/CLASSIC9"
+    },
+    {
+      "difficulty": 10,
+      "type": "guess the title and artist",
+      "song": "Song 10",
+      "artist": "Artist 10",
+      "spotify": "https://open.spotify.com/track/CLASSIC10"
+    }
   ],
-
   "italian": [
-    { "difficulty": 1, "type": "guess the title and artist", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/IT1" },
-    { "difficulty": 2, "type": "guess the title and artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/IT2" },
-    { "difficulty": 3, "type": "guess the title and artist", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/IT3" },
-    { "difficulty": 4, "type": "guess the title and artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/IT4" },
-    { "difficulty": 5, "type": "guess the title and artist", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/IT5" },
-    { "difficulty": 6, "type": "guess the title and artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/IT6" },
-    { "difficulty": 7, "type": "guess the title and artist", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/IT7" },
-    { "difficulty": 8, "type": "guess the title and artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/IT8" },
-    { "difficulty": 9, "type": "guess the title and artist", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/IT9" },
-    { "difficulty": 10, "type": "guess the title and artist", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/IT10" }
+    {
+      "difficulty": 1,
+      "type": "guess the title and artist",
+      "song": "Song 1",
+      "artist": "Artist 1",
+      "spotify": "https://open.spotify.com/track/IT1"
+    },
+    {
+      "difficulty": 2,
+      "type": "guess the title and artist",
+      "song": "Song 2",
+      "artist": "Artist 2",
+      "spotify": "https://open.spotify.com/track/IT2"
+    },
+    {
+      "difficulty": 3,
+      "type": "guess the title and artist",
+      "song": "Song 3",
+      "artist": "Artist 3",
+      "spotify": "https://open.spotify.com/track/IT3"
+    },
+    {
+      "difficulty": 4,
+      "type": "guess the title and artist",
+      "song": "Song 4",
+      "artist": "Artist 4",
+      "spotify": "https://open.spotify.com/track/IT4"
+    },
+    {
+      "difficulty": 5,
+      "type": "guess the title and artist",
+      "song": "Song 5",
+      "artist": "Artist 5",
+      "spotify": "https://open.spotify.com/track/IT5"
+    },
+    {
+      "difficulty": 6,
+      "type": "guess the title and artist",
+      "song": "Song 6",
+      "artist": "Artist 6",
+      "spotify": "https://open.spotify.com/track/IT6"
+    },
+    {
+      "difficulty": 7,
+      "type": "guess the title and artist",
+      "song": "Song 7",
+      "artist": "Artist 7",
+      "spotify": "https://open.spotify.com/track/IT7"
+    },
+    {
+      "difficulty": 8,
+      "type": "guess the title and artist",
+      "song": "Song 8",
+      "artist": "Artist 8",
+      "spotify": "https://open.spotify.com/track/IT8"
+    },
+    {
+      "difficulty": 9,
+      "type": "guess the title and artist",
+      "song": "Song 9",
+      "artist": "Artist 9",
+      "spotify": "https://open.spotify.com/track/IT9"
+    },
+    {
+      "difficulty": 10,
+      "type": "guess the title and artist",
+      "song": "Song 10",
+      "artist": "Artist 10",
+      "spotify": "https://open.spotify.com/track/IT10"
+    }
   ],
-
   "sing-along": [
-    { "difficulty": 1, "type": "continue-lyrics", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/SING1" },
-    { "difficulty": 2, "type": "continue-lyrics", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/SING2" },
-    { "difficulty": 3, "type": "continue-lyrics", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/SING3" },
-    { "difficulty": 4, "type": "continue-lyrics", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/SING4" },
-    { "difficulty": 5, "type": "continue-lyrics", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/SING5" },
-    { "difficulty": 6, "type": "continue-lyrics", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/SING6" },
-    { "difficulty": 7, "type": "continue-lyrics", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/SING7" },
-    { "difficulty": 8, "type": "continue-lyrics", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/SING8" },
-    { "difficulty": 9, "type": "continue-lyrics", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/SING9" },
-    { "difficulty": 10, "type": "continue-lyrics", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/SING10" }
+    {
+      "difficulty": 1,
+      "type": "continue-lyrics",
+      "song": "Song 1",
+      "artist": "Artist 1",
+      "spotify": "https://open.spotify.com/track/SING1"
+    },
+    {
+      "difficulty": 2,
+      "type": "continue-lyrics",
+      "song": "Song 2",
+      "artist": "Artist 2",
+      "spotify": "https://open.spotify.com/track/SING2"
+    },
+    {
+      "difficulty": 3,
+      "type": "continue-lyrics",
+      "song": "Song 3",
+      "artist": "Artist 3",
+      "spotify": "https://open.spotify.com/track/SING3"
+    },
+    {
+      "difficulty": 4,
+      "type": "guess the title and artist",
+      "song": "Azzurro",
+      "artist": "Adriano Celentano",
+      "spotify": "https://open.spotify.com/track/18IHat7huwIdEQ9hhaKfDr"
+    },
+    {
+      "difficulty": 5,
+      "type": "continue-lyrics",
+      "song": "Song 5",
+      "artist": "Artist 5",
+      "spotify": "https://open.spotify.com/track/SING5"
+    },
+    {
+      "difficulty": 6,
+      "type": "continue-lyrics",
+      "song": "Song 6",
+      "artist": "Artist 6",
+      "spotify": "https://open.spotify.com/track/SING6"
+    },
+    {
+      "difficulty": 7,
+      "type": "continue-lyrics",
+      "song": "Song 7",
+      "artist": "Artist 7",
+      "spotify": "https://open.spotify.com/track/SING7"
+    },
+    {
+      "difficulty": 8,
+      "type": "continue-lyrics",
+      "song": "Song 8",
+      "artist": "Artist 8",
+      "spotify": "https://open.spotify.com/track/SING8"
+    },
+    {
+      "difficulty": 9,
+      "type": "continue-lyrics",
+      "song": "Song 9",
+      "artist": "Artist 9",
+      "spotify": "https://open.spotify.com/track/SING9"
+    },
+    {
+      "difficulty": 10,
+      "type": "guess the title and artist",
+      "song": "Kid A",
+      "artist": "Radiohead",
+      "spotify": "https://open.spotify.com/track/3QDahKSqLwYJYQRbILdzS6"
+    }
   ],
-
   "movie-soundtrack": [
-    { "difficulty": 1, "type": "guess the movie", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/MS1" },
-    { "difficulty": 2, "type": "guess the movie", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/MS2" },
-    { "difficulty": 3, "type": "guess the movie", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/MS3" },
-    { "difficulty": 4, "type": "guess the movie", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/MS4" },
-    { "difficulty": 5, "type": "guess the movie", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/MS5" },
-    { "difficulty": 6, "type": "guess the movie", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/MS6" },
-    { "difficulty": 7, "type": "guess the movie", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/MS7" },
-    { "difficulty": 8, "type": "guess the movie", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/MS8" },
-    { "difficulty": 9, "type": "guess the movie", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/MS9" },
-    { "difficulty": 10, "type": "guess the movie", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/MS10" }
+    {
+      "difficulty": 1,
+      "type": "guess the movie",
+      "song": "Song 1",
+      "artist": "Artist 1",
+      "spotify": "https://open.spotify.com/track/MS1"
+    },
+    {
+      "difficulty": 2,
+      "type": "guess the movie",
+      "song": "Song 2",
+      "artist": "Artist 2",
+      "spotify": "https://open.spotify.com/track/MS2"
+    },
+    {
+      "difficulty": 3,
+      "type": "guess the movie",
+      "song": "Song 3",
+      "artist": "Artist 3",
+      "spotify": "https://open.spotify.com/track/MS3"
+    },
+    {
+      "difficulty": 4,
+      "type": "guess the movie",
+      "song": "Song 4",
+      "artist": "Artist 4",
+      "spotify": "https://open.spotify.com/track/MS4"
+    },
+    {
+      "difficulty": 5,
+      "type": "guess the movie",
+      "song": "Song 5",
+      "artist": "Artist 5",
+      "spotify": "https://open.spotify.com/track/MS5"
+    },
+    {
+      "difficulty": 6,
+      "type": "guess the movie",
+      "song": "Song 6",
+      "artist": "Artist 6",
+      "spotify": "https://open.spotify.com/track/MS6"
+    },
+    {
+      "difficulty": 7,
+      "type": "guess the movie",
+      "song": "Song 7",
+      "artist": "Artist 7",
+      "spotify": "https://open.spotify.com/track/MS7"
+    },
+    {
+      "difficulty": 8,
+      "type": "guess the movie",
+      "song": "Song 8",
+      "artist": "Artist 8",
+      "spotify": "https://open.spotify.com/track/MS8"
+    },
+    {
+      "difficulty": 9,
+      "type": "guess the movie",
+      "song": "Song 9",
+      "artist": "Artist 9",
+      "spotify": "https://open.spotify.com/track/MS9"
+    },
+    {
+      "difficulty": 10,
+      "type": "guess the movie",
+      "song": "Song 10",
+      "artist": "Artist 10",
+      "spotify": "https://open.spotify.com/track/MS10"
+    }
   ]
 }
