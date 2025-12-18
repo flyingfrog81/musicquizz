@@ -24,10 +24,10 @@ const SPOTIFY_CONFIG = {
 
 // ⚠️ SETUP INSTRUCTIONS:
 // 1. Go to https://developer.spotify.com/dashboard
-// 2. Click on your app, then look for "App settings" or "Edit settings"
-// 3. Add 'https://flyingfrog81.github.io/musicquizz/' as a Redirect URI
-// 4. Note: If you see "Web API" settings, make sure they're enabled
-// 5. Client ID is already set below - no changes needed
+// 2. Click on your app, then add 'https://flyingfrog81.github.io/musicquizz/' as a Redirect URI
+// 3. IMPORTANT: Go to "User Management" tab and add your email address
+//    (Development mode apps only work for users you explicitly add)
+// 4. Client ID is already set below - no changes needed
 
 let spotifyApi = {
   accessToken: null,
@@ -176,7 +176,20 @@ function initializeSpotifyAuth() {
       return;
     }
     
-    alert(`Spotify authentication error: ${error}. Your app might need different settings in the Spotify Developer Dashboard.`);
+    // Provide specific help based on error type
+    let errorMessage = `Spotify authentication error: ${error}`;
+    
+    if (error === 'access_denied') {
+      errorMessage += '\n\n🔧 This might be because:\n' +
+        '1. Your Spotify app is in Development Mode\n' +
+        '2. Your email needs to be added to "User Management" in the Spotify Dashboard\n' +
+        '3. Go to your app settings → User Management → Add your email';
+    } else if (error === 'unsupported_response_type') {
+      errorMessage += '\n\n🔧 Your Spotify app doesn\'t support this authentication method.\n' +
+        'This is unusual for Development Mode apps.';
+    }
+    
+    alert(errorMessage);
     return;
   }
   
