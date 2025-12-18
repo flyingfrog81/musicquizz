@@ -7,6 +7,12 @@ const difficultiesContainer = document.getElementById("difficulties");
 const challengeContainer    = document.getElementById("challenge");
 
 // ---------------------------------------------------------
+// VERSION INFO
+// ---------------------------------------------------------
+
+const APP_VERSION = '0.5.0';
+
+// ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG
 // ---------------------------------------------------------
 
@@ -126,6 +132,11 @@ let selectedCategory = null;
 
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', function() {
+  // Log version info for debugging
+  console.log(`🎵 Music Quiz App v${APP_VERSION} loaded successfully!`);
+  console.log(`📅 Build: ${new Date().toISOString()}`);
+  console.log(`🌐 Environment: ${window.location.hostname === 'flyingfrog81.github.io' ? 'Production (GitHub Pages)' : 'Development'}`);
+  
   initializeSpotifyAuth();
   renderCategories();
   
