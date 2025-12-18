@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.6.0';
+const APP_VERSION = '0.7.0';
 
 // ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG
@@ -62,14 +62,14 @@ let songsData = {
   "italian": [
     { "difficulty": 1, "type": "guess-title", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/IT1" },
     { "difficulty": 2, "type": "guess-artist", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/IT2" },
-    { "difficulty": 3, "type": "guess-title", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/IT3" },
-    { "difficulty": 4, "type": "guess-artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/IT4" },
-    { "difficulty": 5, "type": "guess-title", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/IT5" },
-    { "difficulty": 6, "type": "guess-artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/IT6" },
-    { "difficulty": 7, "type": "guess-title", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/IT7" },
-    { "difficulty": 8, "type": "guess-artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/IT8" },
-    { "difficulty": 9, "type": "guess-title", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/IT9" },
-    { "difficulty": 10, "type": "guess-title", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/IT10" }
+    { "difficulty": 3, "type": "guess the title and artist", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/IT3" },
+    { "difficulty": 4, "type": "guess the title and artist", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/IT4" },
+    { "difficulty": 5, "type": "guess the title and artist", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/IT5" },
+    { "difficulty": 6, "type": "guess the title and artist", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/IT6" },
+    { "difficulty": 7, "type": "guess the title and artist", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/IT7" },
+    { "difficulty": 8, "type": "guess the title and artist", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/IT8" },
+    { "difficulty": 9, "type": "guess the title and artist", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/IT9" },
+    { "difficulty": 10, "type": "guess the title and artist", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/IT10" }
   ],
 
   "sing-along": [
@@ -86,16 +86,16 @@ let songsData = {
   ],
 
   "movie-soundtrack": [
-    { "difficulty": 1, "type": "guess-movie", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/MS1" },
-    { "difficulty": 2, "type": "guess-movie", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/MS2" },
-    { "difficulty": 3, "type": "guess-movie", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/MS3" },
-    { "difficulty": 4, "type": "guess-movie", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/MS4" },
-    { "difficulty": 5, "type": "guess-movie", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/MS5" },
-    { "difficulty": 6, "type": "guess-movie", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/MS6" },
-    { "difficulty": 7, "type": "guess-movie", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/MS7" },
-    { "difficulty": 8, "type": "guess-movie", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/MS8" },
-    { "difficulty": 9, "type": "guess-movie", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/MS9" },
-    { "difficulty": 10, "type": "guess-movie", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/MS10" }
+    { "difficulty": 1, "type": "guess the movie", "song": "Song 1", "artist": "Artist 1", "spotify": "https://open.spotify.com/track/MS1" },
+    { "difficulty": 2, "type": "guess the movie", "song": "Song 2", "artist": "Artist 2", "spotify": "https://open.spotify.com/track/MS2" },
+    { "difficulty": 3, "type": "guess the movie", "song": "Song 3", "artist": "Artist 3", "spotify": "https://open.spotify.com/track/MS3" },
+    { "difficulty": 4, "type": "guess the movie", "song": "Song 4", "artist": "Artist 4", "spotify": "https://open.spotify.com/track/MS4" },
+    { "difficulty": 5, "type": "guess the movie", "song": "Song 5", "artist": "Artist 5", "spotify": "https://open.spotify.com/track/MS5" },
+    { "difficulty": 6, "type": "guess the movie", "song": "Song 6", "artist": "Artist 6", "spotify": "https://open.spotify.com/track/MS6" },
+    { "difficulty": 7, "type": "guess the movie", "song": "Song 7", "artist": "Artist 7", "spotify": "https://open.spotify.com/track/MS7" },
+    { "difficulty": 8, "type": "guess the movie", "song": "Song 8", "artist": "Artist 8", "spotify": "https://open.spotify.com/track/MS8" },
+    { "difficulty": 9, "type": "guess the movie", "song": "Song 9", "artist": "Artist 9", "spotify": "https://open.spotify.com/track/MS9" },
+    { "difficulty": 10, "type": "guess the movie", "song": "Song 10", "artist": "Artist 10", "spotify": "https://open.spotify.com/track/MS10" }
   ]
 };
 let selectedCategory = null;
@@ -518,6 +518,11 @@ function updatePlayerUI(state) {
 // RENDER FUNCTIONS
 // ---------------------------------------------------------
 
+// Update page title dynamically
+function updateTitle(newTitle) {
+  document.querySelector('h1').textContent = newTitle;
+}
+
 // Render category buttons
 function renderCategories() {
   categoriesContainer.innerHTML = "";
@@ -535,6 +540,9 @@ function renderCategories() {
   selectedCategory = null;
   currentTrack = null;
   window.currentChallenge = null;
+  
+  // Reset title to original
+  updateTitle('Music Quiz');
   
   // Reset persistent player track info
   const trackInfoElement = document.getElementById('current-track-info');
@@ -570,6 +578,9 @@ function showChallenge(challenge) {
   // Store current challenge for reveal functionality
   window.currentChallenge = challenge;
   
+  // Update title with category and difficulty
+  updateTitle(`${formatCategoryName(selectedCategory)} - Difficulty ${challenge.difficulty}`);
+  
   // No need to show challenge section anymore - all info is in persistent player
 }
 
@@ -579,6 +590,7 @@ function showChallenge(challenge) {
 
 function selectCategory(category) {
   selectedCategory = category;
+  updateTitle(formatCategoryName(category));
   renderDifficulties(category);
 }
 

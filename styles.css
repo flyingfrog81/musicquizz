@@ -33,12 +33,21 @@ h1 {
   display: none;
 }
 
-/* Grid for categories and difficulties */
-#categories,
+/* Grid for categories - 2x2 layout */
+#categories {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 400px;
+}
+
+/* Grid for difficulties - compact horizontal layout */
 #difficulties {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  max-width: 600px;
+  margin-top: 1rem;
 }
 
 /* Buttons */
