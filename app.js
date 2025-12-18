@@ -218,22 +218,8 @@ function initializeSpotifyAuth() {
     // Initialize Spotify Web Playback SDK
     initializeSpotifyPlayer();
   } else if (authCode) {
-    console.log('Got authorization code, but need backend service to exchange it');
-    console.log('Auth code:', authCode);
-    
-    // For now, show a helpful message
-    alert(`Success! Got authorization code: ${authCode.substring(0, 20)}...
-
-Unfortunately, authorization code flow requires a backend server to securely exchange the code for a token.
-
-For now, please:
-1. Check your Spotify app settings for "Implicit Grant" or "Client Credentials" options
-2. Or we can set up a simple backend service
-
-The implicit grant flow (response_type=token) is what we need for a frontend-only app.`);
-    
-    // Clean up URL
-    window.history.replaceState({}, document.title, window.location.pathname);
+    console.log('Got authorization code, exchanging for access token...');
+    exchangeAuthCodeForToken(authCode);
   } else {
     // Check if we have a stored token that's not expired
     const storedToken = localStorage.getItem('spotify_access_token');
@@ -258,7 +244,65 @@ The implicit grant flow (response_type=token) is what we need for a frontend-onl
   }
 }
 
+async function exchangeAuthCodeForToken(authCode) {
+  try {
+    console.log('Exchanging authorization code for access token...');
+    
+    // Try the backend service first (if deployed)
+    const backendUrl = 'https://your-vercel-app.vercel.app/api/auth'; // Update this URL
+    
+    const response = await fetch(backendUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        code: authCode
+      })
+    });
 
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Token exchange successful');
+      
+      spotifyApi.accessToken = data.access_token;
+      
+      // Store token with expiration time
+      const expirationTime = Date.now() + (data.expires_in * 1000);
+      localStorage.setItem('spotify_access_token', data.access_token);
+      localStorage.setItem('spotify_token_expiration', expirationTime.toString());
+      
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Initialize Spotify Web Playback SDK
+      initializeSpotifyPlayer();
+      
+    } else {
+      throw new Error(`Backend service failed: ${response.status}`);
+    }
+    
+  } catch (error) {
+    console.error('Token exchange failed:', error);
+    
+    // Show helpful message about backend setup
+    alert(`Got authorization code successfully! 🎉
+
+However, to complete the authentication, you need to deploy a simple backend service.
+
+Next steps:
+1. Deploy the backend service to Vercel (free)
+2. Add your Spotify Client Secret to Vercel environment variables  
+3. Update the backend URL in the code
+
+For now, the authorization is working - we just need the token exchange service.
+
+Auth code: ${authCode.substring(0, 20)}...`);
+    
+    // Clean up URL anyway
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
 
 function authenticateSpotify() {
   console.log('Starting Spotify authentication...');
