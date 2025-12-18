@@ -579,19 +579,12 @@ function showChallenge(challenge) {
     <h2>Challenge - Difficulty ${challenge.difficulty}</h2>
     <p class="challenge-type">Type: ${formatChallengeType(challenge.type)}</p>
     
-    <div class="spotify-controls">
-      <button id="btn-reveal" class="control-button reveal-button">🔍 Reveal</button>
-    </div>
-    
     <div id="song-info" class="song-info hidden">
       <div class="loading">Loading song information...</div>
     </div>
-    
-    <div id="spotify-player" class="spotify-player"></div>
   `;
 
-  // Load the Spotify player (now without overlay)
-  loadSpotifyPlayer(challenge);
+  // Setup challenge controls (reveal button now in persistent player)
   setupChallengeControls(challenge);
 
   showSection(challengeContainer);
@@ -631,60 +624,12 @@ function formatChallengeType(type) {
   }
 }
 
-// Load Spotify player with Web Playback SDK
-async function loadSpotifyPlayer(challenge) {
-  const playerDiv = document.getElementById("spotify-player");
-  const trackId = extractSpotifyTrackId(challenge.spotify);
-  
-  if (!trackId) {
-    playerDiv.innerHTML = '<div class="error">Invalid Spotify URL</div>';
-    return;
-  }
-  
-  // Check if user is authenticated
-  if (!spotifyApi.accessToken) {
-    playerDiv.innerHTML = `
-      <div class="auth-required">
-        <h3>🎵 Spotify Authentication Required</h3>
-        <p>To play full songs with complete control, please connect to Spotify:</p>
-        <button onclick="authenticateSpotify()" class="auth-button">
-          🎵 Connect to Spotify
-        </button>
-        <p class="auth-note">This will allow you to play, pause, restart, and control the music properly.</p>
-      </div>
-    `;
-    return;
-  }
-  
-  // Create our custom player without overlay
-  playerDiv.innerHTML = `
-    <div class="sdk-player-container">
-      <div class="player-controls">
-        <button id="play-btn" class="control-btn play" onclick="playTrack('${challenge.spotify}')">▶️</button>
-        <button id="pause-btn" class="control-btn pause" onclick="pauseTrack()">⏸️</button>
-        <button id="restart-btn" class="control-btn restart" onclick="restartTrack()">⏮️</button>
-        <div class="volume-container">
-          <span>🔊</span>
-          <input type="range" id="volume-slider" min="0" max="100" value="70" onchange="setVolume(this.value)">
-        </div>
-      </div>
-      
-      <div class="player-status" id="player-status">
-        Ready to play
-      </div>
-    </div>
-  `;
-}
+// Lower player functionality removed - using only persistent player now
 
-// Setup challenge control buttons
+// Setup challenge control buttons - reveal button is now in persistent player
 function setupChallengeControls(challenge) {
-  const revealBtn = document.getElementById("btn-reveal");
-  const playerDiv = document.getElementById("spotify-player");
-  
-  revealBtn.onclick = () => {
-    revealSongInfo(challenge);
-    // Player is always visible, no need to reveal it
-  };
+  // Store current challenge for reveal functionality
+  window.currentChallenge = challenge;
 }
 
 
@@ -714,14 +659,11 @@ function createPlayerControls() {
         <button id="persistent-play-btn" class="control-btn play" onclick="playCurrentTrack()">▶️</button>
         <button id="persistent-pause-btn" class="control-btn pause" onclick="pauseTrack()">⏸️</button>
         <button id="persistent-restart-btn" class="control-btn restart" onclick="restartTrack()">⏮️</button>
+        <button id="btn-reveal" class="control-btn reveal" onclick="revealCurrentSong()">🔍 Reveal</button>
         <div class="volume-container">
           <span>🔊</span>
           <input type="range" id="persistent-volume-slider" min="0" max="100" value="70" onchange="setVolume(this.value)">
         </div>
-      </div>
-      
-      <div class="player-status" id="persistent-player-status">
-        Ready to play
       </div>
       
       <div id="current-track-info" class="track-info">
@@ -758,11 +700,18 @@ function updatePersistentPlayerTrackInfo(challenge) {
   if (trackInfoElement) {
     trackInfoElement.innerHTML = `
       <div class="track-preview">
-        <strong>Ready to play:</strong> Challenge ${challenge.difficulty}
-        <br>
-        <small>${formatChallengeType(challenge.type)}</small>
+        <strong>Challenge ${challenge.difficulty}:</strong> ${formatChallengeType(challenge.type)}
       </div>
     `;
+  }
+}
+
+// Reveal function for persistent player
+function revealCurrentSong() {
+  if (window.currentChallenge) {
+    revealSongInfo(window.currentChallenge);
+  } else {
+    alert('Please select a challenge first!');
   }
 }
 
