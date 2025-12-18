@@ -550,17 +550,15 @@ button:active {
   }
 }
 
-/* Position the Spotify player below the header */
+/* Spotify player in normal document flow */
 #persistent-spotify-player {
-  position: fixed;
-  top: 80px; /* Below the header */
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  position: relative;
+  margin-top: 80px; /* Space below the fixed header */
+  margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Add top margin to body to account for fixed header + player */
+/* Reduce body padding since player is no longer fixed */
 body {
-  padding-top: 360px; /* Header height + player height */
+  padding-top: 80px; /* Just for the fixed header */
 }

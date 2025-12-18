@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.8.1';
+const APP_VERSION = '0.8.2';
 
 // ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG
@@ -222,7 +222,7 @@ function initializeSpotifyAuth() {
       if (!isExpired) {
         console.log('Using stored token');
         spotifyApi.accessToken = storedToken;
-        initializeSpotifyPlayer();
+        console.log('Token ready - using embed player, no SDK needed');
       } else {
         console.log('Token expired, clearing storage');
         localStorage.removeItem('spotify_access_token');
@@ -338,33 +338,8 @@ function authenticateSpotify() {
 }
 
 function initializeSpotifyPlayer() {
-  if (!spotifyApi.accessToken) {
-    console.log('No access token available for player initialization');
-    return;
-  }
-  
-  console.log('Initializing Spotify player...');
-  
-  // Load Spotify Web Playback SDK
-  if (!window.Spotify) {
-    console.log('Loading Spotify SDK...');
-    const script = document.createElement('script');
-    script.src = 'https://sdk.scdn.co/spotify-player.js';
-    script.onload = () => {
-      console.log('Spotify SDK loaded');
-      window.onSpotifyWebPlaybackSDKReady = () => {
-        console.log('Spotify SDK ready');
-        createSpotifyPlayer();
-      };
-    };
-    script.onerror = () => {
-      console.error('Failed to load Spotify SDK');
-    };
-    document.head.appendChild(script);
-  } else {
-    console.log('Spotify SDK already loaded');
-    createSpotifyPlayer();
-  }
+  console.log('Using Spotify embed player - no SDK initialization needed');
+  // Embed player requires no complex setup
 }
 
 function createSpotifyPlayer() {
@@ -414,8 +389,7 @@ function createSpotifyPlayer() {
     spotifyApi.deviceId = device_id;
     spotifyApi.player = player;
     
-    // Update persistent player controls
-    updatePersistentPlayerAfterAuth();
+    // Player ready - using embed player, no additional setup needed
   });
 
   // Connect to the player!
