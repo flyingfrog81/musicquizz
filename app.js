@@ -10,7 +10,7 @@ const challengeContainer    = document.getElementById("challenge");
 // VERSION INFO
 // ---------------------------------------------------------
 
-const APP_VERSION = '0.7.2';
+const APP_VERSION = '0.8.0';
 
 // ---------------------------------------------------------
 // SPOTIFY WEB PLAYBACK SDK CONFIG
@@ -544,11 +544,20 @@ function renderCategories() {
   // Reset title to original
   updateTitle('Music Quiz');
   
-  // Reset persistent player track info
-  const trackInfoElement = document.getElementById('current-track-info');
-  if (trackInfoElement) {
-    trackInfoElement.innerHTML = 'No track selected';
+  // Reset Spotify embed and challenge info
+  const embedContainer = document.getElementById('spotify-embed-container');
+  if (embedContainer) {
+    embedContainer.innerHTML = '<div class="no-track-selected"><p>Select a challenge to start playing music</p></div>';
   }
+  
+  const challengeInfoElement = document.getElementById('current-challenge-info');
+  if (challengeInfoElement) {
+    challengeInfoElement.innerHTML = 'No challenge selected';
+  }
+  
+  // Disable reveal button
+  const revealBtn = document.getElementById('btn-reveal');
+  if (revealBtn) revealBtn.disabled = true;
 
   showSection(categoriesContainer);
   hideSection(difficultiesContainer);
@@ -571,17 +580,21 @@ function renderDifficulties(category) {
 
 // Select challenge and update persistent player
 function showChallenge(challenge) {
-  // Set current track for persistent player
-  currentTrack = challenge.spotify;
-  updatePersistentPlayerTrackInfo(challenge);
+  // Update Spotify embed with new track
+  updateSpotifyEmbed(challenge.spotify);
+  
+  // Update challenge info
+  updateChallengeInfo(challenge);
   
   // Store current challenge for reveal functionality
   window.currentChallenge = challenge;
   
+  // Enable reveal button
+  const revealBtn = document.getElementById('btn-reveal');
+  if (revealBtn) revealBtn.disabled = false;
+  
   // Update title with category and difficulty
   updateTitle(`${formatCategoryName(selectedCategory)} - Difficulty ${challenge.difficulty}`);
-  
-  // No need to show challenge section anymore - all info is in persistent player
 }
 
 // ---------------------------------------------------------
@@ -631,66 +644,59 @@ function initializePersistentPlayer() {
   const playerContainer = document.createElement('div');
   playerContainer.id = 'persistent-spotify-player';
   playerContainer.innerHTML = `
-    <div class="persistent-player">
+    <div class="spotify-embed-player">
       <h3>🎵 Spotify Player</h3>
-      <div id="persistent-player-content">
-        ${spotifyApi.accessToken ? createPlayerControls() : createAuthPrompt()}
+      <div id="spotify-embed-container">
+        <div class="no-track-selected">
+          <p>Select a challenge to start playing music</p>
+        </div>
+      </div>
+      <div id="challenge-info" class="challenge-info">
+        <div id="current-challenge-info">No challenge selected</div>
+        <button id="btn-reveal" class="reveal-btn" onclick="revealCurrentSong()" disabled>🔍 Reveal Answer</button>
       </div>
     </div>
   `;
   
-  // Add to the page - you can adjust where this appears
+  // Add to the page
   document.body.insertBefore(playerContainer, document.body.firstChild);
 }
 
-function createPlayerControls() {
-  return `
-    <div class="sdk-player-container">
-      <div class="player-controls">
-        <button id="persistent-play-btn" class="control-btn play" onclick="playCurrentTrack()">▶️</button>
-        <button id="persistent-pause-btn" class="control-btn pause" onclick="pauseTrack()">⏸️</button>
-        <button id="persistent-restart-btn" class="control-btn restart" onclick="restartTrack()">⏮️</button>
-        <button id="btn-reveal" class="control-btn reveal" onclick="revealCurrentSong()">🔍 Reveal</button>
-        <div class="volume-container">
-          <span>🔊</span>
-          <input type="range" id="persistent-volume-slider" min="0" max="100" value="70" onchange="setVolume(this.value)">
-        </div>
-      </div>
-      
-      <div id="current-track-info" class="track-info">
-        No track selected
-      </div>
-    </div>
+// Simple function to update the Spotify embed with a new track
+function updateSpotifyEmbed(spotifyUrl) {
+  const container = document.getElementById('spotify-embed-container');
+  if (!container) return;
+  
+  // Extract track ID from Spotify URL
+  const trackId = extractSpotifyTrackId(spotifyUrl);
+  if (!trackId) {
+    container.innerHTML = '<div class="error">Invalid Spotify URL</div>';
+    return;
+  }
+  
+  // Create Spotify embed iframe
+  container.innerHTML = `
+    <iframe 
+      style="border-radius:12px" 
+      src="https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0" 
+      width="100%" 
+      height="152" 
+      frameBorder="0" 
+      allowfullscreen="" 
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+      loading="lazy">
+    </iframe>
   `;
 }
 
-function createAuthPrompt() {
-  return `
-    <div class="auth-required">
-      <p>Connect to Spotify to enable music playback:</p>
-      <button onclick="authenticateSpotify()" class="auth-button">
-        🎵 Connect to Spotify
-      </button>
-    </div>
-  `;
-}
-
-// Global variable to track current track
+// Global variable to track current challenge (simplified)
 let currentTrack = null;
 
-function playCurrentTrack() {
-  if (currentTrack) {
-    playTrack(currentTrack);
-  } else {
-    alert('Please select a challenge first to choose a track to play.');
-  }
-}
-
-function updatePersistentPlayerTrackInfo(challenge) {
-  const trackInfoElement = document.getElementById('current-track-info');
-  if (trackInfoElement) {
-    trackInfoElement.innerHTML = `
-      <div class="track-preview">
+function updateChallengeInfo(challenge) {
+  const challengeInfoElement = document.getElementById('current-challenge-info');
+  if (challengeInfoElement) {
+    challengeInfoElement.innerHTML = `
+      <div class="challenge-details">
         <strong>Challenge ${challenge.difficulty}:</strong> ${formatChallengeType(challenge.type)}
       </div>
     `;
@@ -706,13 +712,7 @@ function revealCurrentSong() {
   }
 }
 
-// Update persistent player when Spotify player is ready
-function updatePersistentPlayerAfterAuth() {
-  const persistentPlayerContent = document.getElementById('persistent-player-content');
-  if (persistentPlayerContent && spotifyApi.accessToken) {
-    persistentPlayerContent.innerHTML = createPlayerControls();
-  }
-}
+// Simplified - no auth needed for Spotify embeds
 
 // Reveal song information in persistent player
 async function revealSongInfo(challenge) {
